@@ -28,15 +28,16 @@
             backgroundImage: !!`url('${constants.image.header_bg}')`,
             height: '100%',
           }"
-          default-active="1-1"
-          @open="handleMenuOpen"
+          default-active="/"
+          router
         >
           <el-submenu index="1">
             <template #title>
               <i class="el-icon-user-solid"></i>
               <span>Customer</span>
             </template>
-            <el-menu-item index="1-1">Registration</el-menu-item>
+            <el-menu-item index="/">Signup</el-menu-item>
+            <el-menu-item index="/attendance">Attendance</el-menu-item>
           </el-submenu>
           <el-submenu index="2">
             <template #title>
@@ -46,9 +47,14 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main style="background-color: #f1f2f3">
-        <router-view></router-view>
-      </el-main>
+      <el-container
+        style="background-color: #f1f2f3; height: calc(100vh - 80px)"
+        direction="vertical"
+      >
+        <el-main>
+          <router-view></router-view>
+        </el-main>
+      </el-container>
     </el-container>
   </el-container>
 </template>
@@ -63,15 +69,18 @@ export default {
           this.$store.dispatch("setProgramlist", result.data);
         });
     }
+    if (this.$store.state.productlist.length < 1) {
+      this.$http
+        .get(this.constants.string.server_base + "api/productlist")
+        .then((result) => {
+          this.$store.dispatch("setProductlist", result.data);
+        });
+    }
   },
   mounted() {
     console.log(this);
   },
-  methods: {
-    handleMenuOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-  },
+  methods: {},
 };
 </script>
 
@@ -90,6 +99,7 @@ export default {
   >>> .el-menu-item
     &.is-active
       color #fcee01
+      background-color transparent
 </style>
 
 <style lang="stylus">

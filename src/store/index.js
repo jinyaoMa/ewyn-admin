@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import program from "./program";
+import product from "./product";
 
 Vue.use(Vuex);
 
@@ -19,9 +20,7 @@ const combine = (...stores) => {
 
 export default new Vuex.Store(
   combine(
-    {
-      state: {}
-    },
-    program
+    program,
+    product
   )
 );

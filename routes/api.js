@@ -6,5 +6,15 @@ module.exports = (express, db) => {
     res.json(list);
   });
 
+  router.get("/productlist", function(req, res, next) {
+    const list = require("../datas/Productlist");
+    res.json(list);
+  });
+
+  router.get("/customerlist", function(req, res, next) {
+    const list = require("../datas/Customerlist");
+    res.json(list);
+  });
+
   return router;
 };

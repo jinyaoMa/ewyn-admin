@@ -1,0 +1,47 @@
+module.exports = [
+  {
+    customer_id: 1,
+    first_name: "Jason",
+    last_name: "Wang",
+    telephone: "1231231234",
+    goal_date: "2021-12-31",
+    email: "abc@abc.com",
+    program_id: 1,
+    reason: "xxx...",
+    product_id: 1,
+    recommend: 2,
+    start_date: "2020-12-31",
+    start_weight: 321,
+    goal_weight: 123
+  },
+  {
+    customer_id: 2,
+    first_name: "Mark",
+    last_name: "Ma",
+    telephone: "3213214321",
+    goal_date: "2022-01-01",
+    email: "def@def.com",
+    program_id: 5,
+    reason: "xyzabcdef",
+    product_id: 4,
+    recommend: 3,
+    start_date: "2019-09-19",
+    start_weight: 213,
+    goal_weight: 132
+  },
+  {
+    customer_id: 3,
+    first_name: "Test",
+    last_name: "Robot",
+    telephone: "1112223333",
+    goal_date: "2021-12-31",
+    email: "abc@abc.com",
+    program_id: 1,
+    reason: "xxx...",
+    product_id: 1,
+    recommend: 2,
+    start_date: "2020-12-31",
+    start_weight: 321,
+    goal_weight: 123
+  },
+];
