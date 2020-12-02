@@ -28,7 +28,7 @@
             backgroundImage: !!`url('${constants.image.header_bg}')`,
             height: '100%',
           }"
-          default-active="/"
+          :default-active="$route.path"
           router
         >
           <el-submenu index="1">
@@ -36,8 +36,10 @@
               <i class="el-icon-user-solid"></i>
               <span>Customer</span>
             </template>
-            <el-menu-item index="/">Signup</el-menu-item>
+            <el-menu-item index="/">Management</el-menu-item>
             <el-menu-item index="/attendance">Attendance</el-menu-item>
+            <el-menu-item index="/measurement">Measurement</el-menu-item>
+            <el-menu-item index="/calendar">Calendar</el-menu-item>
           </el-submenu>
           <el-submenu index="2">
             <template #title>
@@ -61,24 +63,11 @@
 
 <script>
 export default {
-  created() {
-    if (this.$store.state.programlist.length < 1) {
-      this.$http
-        .get(this.constants.string.server_base + "api/programlist")
-        .then((result) => {
-          this.$store.dispatch("setProgramlist", result.data);
-        });
-    }
-    if (this.$store.state.productlist.length < 1) {
-      this.$http
-        .get(this.constants.string.server_base + "api/productlist")
-        .then((result) => {
-          this.$store.dispatch("setProductlist", result.data);
-        });
-    }
-  },
   mounted() {
     console.log(this);
+    this.getProgramlist();
+    this.getProductlist();
+    this.getCompliancylist();
   },
   methods: {},
 };
@@ -112,6 +101,7 @@ body
   height 100vh
   width 100vw
   overflow hidden
+  letter-spacing 1px
 
 .image-bg
   background-attachment fixed
