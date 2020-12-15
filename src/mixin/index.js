@@ -91,6 +91,13 @@ export default {
           this.customerPhone = result.data.data;
         });
     },
+    searchCustomer(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "customer/search", data)
+        .then((result) => {
+          typeof callback === "function" && callback(result.data);
+        });
+    },
     getAttendancelist() {
       this.$http
         .get(this.constants.string.server_base + "attendance/all")
@@ -106,7 +113,9 @@ export default {
         });
     },
     getAttendanceByDate(date) {
-      return this.attendanceList.filter(p => _moment(p.date).format("YYYY-MM-DD") == date);
+      return this.attendanceList.filter(
+        (p) => _moment(p.date).format("YYYY-MM-DD") == date
+      );
     },
     getMeasurementlist() {
       this.$http
@@ -142,12 +151,78 @@ export default {
           typeof callback === "function" && callback(result);
         });
     },
-    deleteCustomer(data, callback) {
+    deleteCustomerById(id, callback) {
       this.$http
-        .post(this.constants.string.server_base + "customer/deactivate", data)
+        .get(this.constants.string.server_base + `customer/deactivate/${id}`)
         .then((result) => {
           if (result.data.affectedRows === 1) {
             this.customerList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    addAttendance(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "attendance/add", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.attendanceList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    editAttendance(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "attendance/edit", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.attendanceList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    deleteAttendance(id, data, callback) {
+      this.$http
+        .post(
+          this.constants.string.server_base + `attendance/delete/${id}`,
+          data
+        )
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.attendanceList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    addMeasurement(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "measurement/add", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.measurementList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    editMeasurement(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "measurement/edit", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.measurementList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    deleteMeasurement(id, data, callback) {
+      this.$http
+        .post(
+          this.constants.string.server_base + `measurement/delete/${id}`,
+          data
+        )
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.measurementList = result.data.data;
           }
           typeof callback === "function" && callback(result);
         });

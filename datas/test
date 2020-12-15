@@ -1,0 +1,1 @@
+select a.date, a.weight, c.first_name, c.last_name from ewyn0.attendance a inner join ewyn0.customer c on a.customerid=c.customerid where a.customerid='1' order by date desc

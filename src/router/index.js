@@ -4,6 +4,7 @@ import Signup from "../views/Signup.vue";
 import Attendance from "../views/Attendance.vue";
 import Measurement from "../views/Measurement.vue";
 import Calendar from "../views/Calendar.vue";
+import WeightTrack from "../views/WeightTrack.vue";
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,11 @@ const routes = [
     path: "/calendar",
     name: "Calendar",
     component: Calendar
+  },
+  {
+    path: "/weightTrack",
+    name: "WeightTrack",
+    component: WeightTrack
   }
 ];
 

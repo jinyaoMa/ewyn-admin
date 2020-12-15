@@ -29,6 +29,7 @@
             height: '100%',
           }"
           :default-active="$route.path"
+          :default-openeds="['1', '2']"
           router
         >
           <el-submenu index="1">
@@ -39,13 +40,14 @@
             <el-menu-item index="/">Management</el-menu-item>
             <el-menu-item index="/attendance">Attendance</el-menu-item>
             <el-menu-item index="/measurement">Measurement</el-menu-item>
-            <el-menu-item index="/calendar">Calendar</el-menu-item>
+            <el-menu-item index="/weightTrack">Weight Track</el-menu-item>
           </el-submenu>
           <el-submenu index="2">
             <template #title>
               <i class="el-icon-setting"></i>
               <span>Administrator</span>
             </template>
+            <el-menu-item index="/calendar">Calendar</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>

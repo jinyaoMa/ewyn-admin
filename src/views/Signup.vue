@@ -1,6 +1,100 @@
 <template>
   <div class="signup">
+    <el-dialog
+      width="80%"
+      title="Search customer"
+      :visible.sync="dialogFormVisible"
+      @close="handleDialogClose"
+    >
+      <el-dialog
+        top="20vh"
+        width="65%"
+        title="Select one customer"
+        :visible.sync="dialogFormInnerVisible"
+        append-to-body
+      >
+        <el-table
+          :data="dialogFormInnerTable"
+          max-height="500"
+          highlight-current-row
+          @current-change="handleInnerTableCurrentChange"
+          style="width: 100%"
+        >
+          <el-table-column
+            show-overflow-tooltip
+            sortable
+            prop="first_name"
+            label="First Name"
+          ></el-table-column>
+          <el-table-column
+            show-overflow-tooltip
+            sortable
+            prop="last_name"
+            label="Last Name"
+          ></el-table-column>
+          <el-table-column
+            show-overflow-tooltip
+            sortable
+            width="130px"
+            prop="telephone"
+            label="Telephone"
+          ></el-table-column>
+          <el-table-column
+            show-overflow-tooltip
+            sortable
+            prop="email"
+            label="Email"
+          ></el-table-column>
+        </el-table>
+        <div v-if="dialogFormInnerSelect" slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="handleDialogInnerSelect">
+            Select
+          </el-button>
+        </div>
+      </el-dialog>
+      <el-form :model="dialogForm">
+        <el-form-item label="First Name">
+          <el-input
+            v-model="dialogForm.firstname"
+            placeholder="First Name"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Last Name">
+          <el-input
+            v-model="dialogForm.lastname"
+            placeholder="Last Name"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Telephone">
+          <el-input
+            v-model="dialogForm.telephone"
+            placeholder="Telephone"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Email">
+          <el-input
+            v-model="dialogForm.email"
+            placeholder="Email"
+            type="email"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="handleDialogSearch">
+          Search
+        </el-button>
+      </div>
+    </el-dialog>
     <el-form :inline="false" :model="form" class="form" label-width="150px">
+      <el-form-item>
+        <el-switch
+          v-model="form.action"
+          inactive-text="New Customer"
+          active-text="Edit Customer"
+          @change="handleActionChange"
+        >
+        </el-switch>
+      </el-form-item>
       <el-form-item label="First Name">
         <el-input v-model="form.firstname" placeholder="First Name"></el-input>
       </el-form-item>
@@ -96,11 +190,13 @@
         <el-button v-if="isEdit" type="primary" @click="onConfirm"
           >Confirm</el-button
         >
-        <el-button v-if="isEdit" type="info" @click="onCancel"
-          >Cancel</el-button
+        <el-button v-if="isEdit" type="danger" @click="onInactivate"
+          >Inactivate</el-button
         >
+        <el-button type="info" @click="onCancel">Clear Form</el-button>
       </el-form-item>
     </el-form>
+    <!--
     <el-divider v-if="customerList.length > 0 && !isEdit"></el-divider>
     <el-table
       v-if="customerList.length > 0 && !isEdit"
@@ -229,15 +325,30 @@
         </template>
       </el-table-column>
     </el-table>
+    -->
   </div>
 </template>
 
 <script>
+import moment from "moment";
+
 export default {
   name: "Signup",
   data() {
     return {
+      dialogFormVisible: false,
+      dialogFormInnerVisible: false,
+      dialogFormInnerTable: [],
+      dialogFormInnerSelect: null,
+      dialogForm: {
+        firstname: "",
+        lastname: "",
+        telephone: "",
+        email: "",
+      },
+      customerId: 0,
       form: {
+        action: false,
         firstname: "",
         lastname: "",
         telephone: "",
@@ -255,17 +366,86 @@ export default {
       editId: 0,
     };
   },
-  mounted() {
-    this.getCustomerlist();
-  },
   methods: {
+    handleDialogInnerSelect() {
+      const c = this.dialogFormInnerSelect;
+      this.$confirm(
+        `${c.first_name} ${c.last_name} (${c.telephone}, ${c.email})`,
+        "Confirm customer",
+        {
+          confirmButtonText: "Confirm",
+          cancelButtonText: "Cancel",
+          type: "info",
+        }
+      )
+        .then(() => {
+          this.isEdit = true;
+          this.customerId = c.customerid;
+          this.form = {
+            action: true,
+            firstname: c.first_name,
+            lastname: c.last_name,
+            telephone: c.telephone,
+            goalDate: moment(c.goal_date).format("YYYY-MM-DD"),
+            email: c.email,
+            program: c.programid,
+            reason: c.reason,
+            product: c.productid,
+            recommend: c.recommend,
+            startDate: moment(c.start_date).format("YYYY-MM-DD"),
+            startWeight: c.start_weight,
+            goalWeight: c.goal_weight,
+          };
+          this.dialogFormVisible = false;
+          this.dialogFormInnerVisible = false;
+          this.dialogFormInnerSelect = null;
+        })
+        .catch(() => {});
+    },
+    handleInnerTableCurrentChange(row) {
+      this.dialogFormInnerSelect = row;
+    },
+    handleDialogSearch() {
+      this.searchCustomer(this.dialogForm, (result) => {
+        if (result.data) {
+          if (result.data.length === 1) {
+            this.handleInnerTableCurrentChange(result.data[0]);
+            this.handleDialogInnerSelect();
+          } else if (result.data.length > 1) {
+            this.dialogFormInnerTable = result.data;
+            this.dialogFormInnerVisible = true;
+          }
+        }
+      });
+    },
+    handleDialogClose() {
+      if (parseInt(this.customerId) === 0) {
+        this.form.action = false;
+      }
+      this.dialogFormInnerTable = [];
+      this.dialogFormInnerSelect = null;
+    },
+    handleActionChange(flag) {
+      this.dialogFormVisible = flag;
+      if (!flag) {
+        this.onCancel();
+      }
+    },
     onSubmit() {
-      this.addCustomer(this.form, (result) => {});
+      this.addCustomer(this.form, (result) => {
+        if (result.data.data) {
+          this.$message({
+            message: "Create successfully!",
+            type: "success",
+          });
+        }
+      });
     },
     handleEditClick(row) {
       this.isEdit = true;
       this.editId = row.customerid;
       this.form = {
+        action: true,
         firstname: row.first_name,
         lastname: row.last_name,
         telephone: row.telephone,
@@ -298,8 +478,12 @@ export default {
       );
     },
     onCancel() {
+      this.dialogFormInnerTable = [];
+      this.dialogFormInnerSelect = null;
       this.isEdit = false;
+      this.customerId = 0;
       this.form = {
+        action: false,
         firstname: "",
         lastname: "",
         telephone: "",
@@ -313,6 +497,29 @@ export default {
         startWeight: 0.0,
         goalWeight: 0.0,
       };
+    },
+    onInactivate() {
+      this.$confirm(
+        `${this.form.firstname} ${this.form.lastname} (${this.form.telephone}, ${this.form.email}) will be inactivated`,
+        "Inactivcate",
+        {
+          confirmButtonText: "Confirm",
+          cancelButtonText: "Cancel",
+          type: "danger",
+          center: true,
+        }
+      )
+        .then(() => {
+          this.deleteCustomerById(this.customerId, (result) => {
+            if (result.data.affectedRows === 1) {
+              this.$message({
+                type: "success",
+                message: `${this.form.firstname} ${this.form.lastname} (${this.form.telephone}, ${this.form.email}) inactivated!`,
+              });
+            }
+          });
+        })
+        .catch(() => {});
     },
     handleDeleteClick(row) {
       this.$confirm(

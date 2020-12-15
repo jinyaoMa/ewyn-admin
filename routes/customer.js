@@ -39,6 +39,40 @@ module.exports = (express, db) => {
     });
   });
 
+  router.post("/search", function(req, res, next) {
+    console.log(req.body);
+    try {
+      const firstname = req.body.firstname;
+      const lastname = req.body.lastname;
+      const telephone = req.body.telephone;
+      const email = req.body.email;
+      const sql = `SELECT * FROM customer WHERE actived = 1
+      AND first_name LIKE ? AND last_name LIKE ? AND telephone LIKE ? AND email LIKE ?`;
+      const values = [
+        `%${firstname}%`,
+        `%${lastname}%`,
+        `%${telephone}%`,
+        `%${email}%`
+      ];
+      db.query(sql, values, (err, result) => {
+        if (err) {
+          res.json({
+            code: 204,
+            msg: "error"
+          });
+          console.log(err);
+        } else {
+          res.json({
+            code: 200,
+            data: result
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   router.post("/add", function(req, res, next) {
     console.log(req.body);
     try {
@@ -179,9 +213,9 @@ module.exports = (express, db) => {
     }
   });
 
-  router.post("/deactivate", function(req, res, next) {
+  router.get("/deactivate/:id", function(req, res, next) {
     try {
-      const sql = `UPDATE customer SET actived = 0 WHERE customerid = ?`;
+      const sql = `UPDATE customer SET actived = 0 WHERE customerid = ${parseInt(req.params.id)}`;
       db.query(sql, (err, result) => {
         if (err) {
           res.json({
