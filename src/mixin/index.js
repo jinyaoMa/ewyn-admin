@@ -84,6 +84,13 @@ export default {
           this.customerList = result.data.data;
         });
     },
+    getCustomerById(id, callback) {
+      this.$http
+        .get(this.constants.string.server_base + `customer/id/${id}`)
+        .then((result) => {
+          typeof callback === "function" && callback(result.data);
+        });
+    },
     getCustomerPhone() {
       this.$http
         .get(this.constants.string.server_base + "customer/phone")
@@ -116,6 +123,14 @@ export default {
       return this.attendanceList.filter(
         (p) => _moment(p.date).format("YYYY-MM-DD") == date
       );
+    },
+    getAttendanceByDateRange(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "attendance/dateRange", data)
+        .then((result) => {
+          this.attendanceList = result.data.data;
+          typeof callback === "function" && callback(result);
+        });
     },
     getMeasurementlist() {
       this.$http

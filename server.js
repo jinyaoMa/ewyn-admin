@@ -20,10 +20,10 @@ var connection = mysql.createConnection({
   database: process.env.DB_DATABASE
 });
 
-connection.connect(err => {
-  if(err) throw err;
-  console.log('mysql connncted success!');
-})
+connection.connect((err) => {
+  if (err) throw err;
+  console.log("mysql connncted success!");
+});
 
 var app = express();
 
@@ -74,10 +74,19 @@ function autoLoadFile(directory, useSubdirectories = false, extList = [".js"]) {
   return res;
 }
 
+// Auth
+app.use(function(req, res, next) {
+  next();
+});
+
+// Business
 const files = autoLoadFile(path.join(__dirname, "./routes"));
 files.forEach((file) => {
   if (file.path.endsWith("index.js")) return;
-  app.use("/api/" + file.base.replace(/(\.\/|\.js)/g, ""), file.data(express, connection));
+  app.use(
+    "/api/" + file.base.replace(/(\.\/|\.js)/g, ""),
+    file.data(express, connection)
+  );
 });
 
 module.exports = app;

@@ -41,6 +41,40 @@ module.exports = (express, db) => {
     });
   });
 
+  router.post("/dateRange", function(req, res, next) {
+    try {
+      const customerid = req.body.customerid;
+      const startDate = req.body.startDate;
+      const endDate = req.body.endDate;
+      const sql = `SELECT * FROM attendance a INNER JOIN customer c ON c.customerid = a.customerid WHERE c.actived = 1 AND a.customerid = ${parseInt(
+        customerid
+      )} AND DATE_FORMAT(date,'%Y%m%d') BETWEEN ? AND ? ORDER BY date ASC`;
+      db.query(
+        sql,
+        [
+          moment(startDate).format("YYYYMMDD"),
+          moment(endDate).format("YYYYMMDD")
+        ],
+        (err, result) => {
+          if (err) {
+            res.json({
+              code: 204,
+              msg: "error"
+            });
+            console.log(err);
+          } else {
+            res.json({
+              code: 200,
+              data: result
+            });
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   router.post("/add", function(req, res, next) {
     console.log(req.body);
     try {

@@ -21,7 +21,7 @@
       </el-row>
     </el-header>
     <el-container>
-      <el-aside width="320px" class="aside">
+      <el-aside width="250px" class="aside">
         <el-menu
           class="image-bg"
           :style="{

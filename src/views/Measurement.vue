@@ -313,6 +313,18 @@ export default {
       editId: 0,
     };
   },
+  mounted() {
+    if (parseInt(this.$store.state.cid)) {
+      this.getMeasurementById(this.$store.state.cid);
+      this.getCustomerById(this.$store.state.cid, (result) => {
+        if (result.data && result.data.length === 1) {
+          const c = result.data[0];
+          this.customerString = `${c.first_name} ${c.last_name} (${c.telephone}, ${c.email})`;
+          this.form.customer = this.$store.state.cid;
+        }
+      });
+    }
+  },
   methods: {
     handleDialogInnerSelect() {
       const c = this.dialogFormInnerSelect;
@@ -328,6 +340,7 @@ export default {
         .then(() => {
           this.form.customer = c.customerid;
           this.getMeasurementById(c.customerid);
+          this.$store.dispatch("setCID", c.customerid);
           this.customerString = `${c.first_name} ${c.last_name} (${c.telephone}, ${c.email})`;
           this.dialogFormVisible = false;
           this.dialogFormInnerVisible = false;

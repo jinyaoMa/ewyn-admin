@@ -21,6 +21,30 @@ module.exports = (express, db) => {
     });
   });
 
+  router.get("/id/:id", function(req, res, next) {
+    try {
+      const sql = `SELECT * FROM customer WHERE actived = 1 AND customerid = ${parseInt(
+        req.params.id
+      )}`;
+      db.query(sql, (err, result) => {
+        if (err) {
+          res.json({
+            code: 204,
+            msg: "error"
+          });
+          console.log(err);
+        } else {
+          res.json({
+            code: 200,
+            data: result
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   router.get("/phone", function(req, res, next) {
     const sql = `SELECT customerid, CONCAT(first_name, ' ', last_name) as name, telephone FROM customer WHERE actived = 1`;
     db.query(sql, (err, result) => {
@@ -215,7 +239,9 @@ module.exports = (express, db) => {
 
   router.get("/deactivate/:id", function(req, res, next) {
     try {
-      const sql = `UPDATE customer SET actived = 0 WHERE customerid = ${parseInt(req.params.id)}`;
+      const sql = `UPDATE customer SET actived = 0 WHERE customerid = ${parseInt(
+        req.params.id
+      )}`;
       db.query(sql, (err, result) => {
         if (err) {
           res.json({

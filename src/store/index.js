@@ -21,6 +21,21 @@ const combine = (...stores) => {
 
 export default new Vuex.Store(
   combine(
+    {
+      state: {
+        cid: 0
+      },
+      mutations: {
+        setCID(state, id) {
+          state.cid = id;
+        }
+      },
+      actions: {
+        setCID(context, id) {
+          context.commit("setCID", id);
+        }
+      }
+    },
     program,
     product,
     compliancy

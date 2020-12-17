@@ -6,5 +6,6 @@ module.exports = {
       filename: "index.html",
       title: "EWYN Studios"
     }
-  }
+  },
+  transpileDependencies: ["vue-echarts", "resize-detector"]
 };
