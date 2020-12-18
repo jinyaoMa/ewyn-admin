@@ -47,9 +47,56 @@ export default {
         }
         return "";
       };
+    },
+    userPermission() {
+      if (typeof this.$store.state.user.permission === "string") {
+        const matchUser = this.$store.state.user.permission.match(/USER:(\d)/);
+        const matchAdmin = this.$store.state.user.permission.match(
+          /ADMIN:(\-?\d)/
+        );
+        const result = {};
+        if (matchUser) {
+          result.user = parseInt(matchUser[1]);
+        }
+        if (matchAdmin) {
+          result.admin = parseInt(matchAdmin[1]);
+        }
+        return result;
+      }
+      return {
+        user: 0,
+        admin: 0
+      };
     }
   },
   methods: {
+    logout(id) {
+      this.$http
+        .get(this.constants.string.server_base + `user/logout/${id}`)
+        .then((result) => {
+          if (result.data.status === "logout") {
+            this.$store.dispatch("setUser", {});
+            this.$router.push("/login");
+          }
+        });
+    },
+    auth(id, callback) {
+      this.$http
+        .get(this.constants.string.server_base + `user/auth/${id}`)
+        .then((result) => {
+          if (result.data.data) {
+            this.$store.dispatch("setUser", result.data.data);
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    login(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "user/login", data)
+        .then((result) => {
+          typeof callback === "function" && callback(result);
+        });
+    },
     getProgramlist() {
       if (this.$store.state.programlist.length < 1) {
         this.$http
@@ -120,9 +167,15 @@ export default {
         });
     },
     getAttendanceByDate(date) {
-      return this.attendanceList.filter(
-        (p) => _moment(p.date).format("YYYY-MM-DD") == date
-      );
+      if (
+        typeof this.attendanceList === "object" &&
+        typeof this.attendanceList.length === "number"
+      ) {
+        return this.attendanceList.filter(
+          (p) => _moment(p.date).format("YYYY-MM-DD") == date
+        );
+      }
+      return [];
     },
     getAttendanceByDateRange(data, callback) {
       this.$http

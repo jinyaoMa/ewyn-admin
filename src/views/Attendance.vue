@@ -156,9 +156,9 @@
         >
       </el-form-item>
     </el-form>
-    <el-divider v-if="attendanceList.length > 0 && !isEdit"></el-divider>
+    <el-divider v-if="!isEdit"></el-divider>
     <el-table
-      v-if="attendanceList.length > 0 && !isEdit"
+      v-if="!isEdit"
       :data="attendanceList"
       border
       style="width: 100%"

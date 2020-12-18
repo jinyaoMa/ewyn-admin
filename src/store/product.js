@@ -4,7 +4,7 @@ export default {
   },
   mutations: {
     setProductlist(state, list) {
-      state.productlist = list;
+      state.productlist = typeof list === "object" && typeof list.length === "number" ? list : [];
     }
   },
   actions: {

@@ -15,7 +15,12 @@ Vue.config.productionTip = false;
 Vue.prototype.constants = constants;
 
 Vue.use(Element, { locale });
+
+axios.defaults.withCredentials = !(
+  process.argv.length > 2 && process.argv[2] === "--prod"
+);
 Vue.use(VueAxios, axios);
+
 Vue.mixin(mixin);
 
 new Vue({

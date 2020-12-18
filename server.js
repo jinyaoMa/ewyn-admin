@@ -30,12 +30,21 @@ var app = express();
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SIGN));
 if (process.argv.length > 2 && process.argv[2] === "--prod") {
   app.use(express.static(path.join(__dirname, "dist")));
+  app.all("*", function(req, res, next) {
+    res.header("Access-Control-Allow-Methods", "POST,GET");
+    next();
+  });
 } else {
   const cors = require("cors");
-  app.use(cors());
+  const corsOptions = {
+    origin: `${process.env.ORIGIN}:${process.env.PORT}`,
+    credentials: true,
+    maxAge: "1296000"
+  };
+  app.use(cors(corsOptions));
 }
 
 /**
@@ -76,7 +85,45 @@ function autoLoadFile(directory, useSubdirectories = false, extList = [".js"]) {
 
 // Auth
 app.use(function(req, res, next) {
-  next();
+  if (req.url.startsWith("/api/user")) {
+    next();
+  } else {
+    if (
+      typeof req.signedCookies.userid === "string" &&
+      typeof req.signedCookies.access_token === "string"
+    ) {
+      try {
+        const sql = `SELECT * FROM user WHERE actived = 1 AND userid = ? AND access_token = ?`;
+        connection.query(
+          sql,
+          [parseInt(req.signedCookies.userid), req.signedCookies.access_token],
+          (err, result) => {
+            if (err) {
+              res.json({
+                code: 204,
+                msg: "error"
+              });
+              console.log(err);
+            } else if (result.length > 0) {
+              next();
+            } else {
+              res.json({
+                code: 200,
+                status: "logout"
+              });
+            }
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      res.json({
+        code: 204,
+        error: "auth"
+      });
+    }
+  }
 });
 
 // Business

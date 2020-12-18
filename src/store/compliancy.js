@@ -4,7 +4,7 @@ export default {
   },
   mutations: {
     setCompliancylist(state, list) {
-      state.compliancylist = list;
+      state.compliancylist = typeof list === "object" && typeof list.length === "number" ? list : [];
     }
   },
   actions: {

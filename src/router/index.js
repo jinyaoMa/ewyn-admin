@@ -5,10 +5,17 @@ import Attendance from "../views/Attendance.vue";
 import Measurement from "../views/Measurement.vue";
 import Calendar from "../views/Calendar.vue";
 import WeightTrack from "../views/WeightTrack.vue";
+import Login from "../views/Login.vue";
+import User from "../views/User.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
+  {
+    path: "/login",
+    name: "Login",
+    component: Login
+  },
   {
     path: "/",
     name: "Signup",
@@ -33,6 +40,11 @@ const routes = [
     path: "/weightTrack",
     name: "WeightTrack",
     component: WeightTrack
+  },
+  {
+    path: "/user",
+    name: "User",
+    component: User
   }
 ];
 

@@ -182,9 +182,9 @@
         >
       </el-form-item>
     </el-form>
-    <el-divider v-if="measurementList.length > 0 && !isEdit"></el-divider>
+    <el-divider v-if="!isEdit"></el-divider>
     <el-table
-      v-if="measurementList.length > 0 && !isEdit"
+      v-if="!isEdit"
       :data="measurementList"
       border
       style="width: 100%"

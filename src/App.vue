@@ -1,6 +1,7 @@
 <template>
-  <el-container class="App" style="height: 100%">
+  <el-container class="App" style="height: 100%" direction="vertical">
     <el-header
+      v-if="!$route.path.startsWith('/login')"
       height="80px"
       class="header image-bg"
       :style="{ backgroundImage: !!`url('${constants.image.header_bg}')` }"
@@ -17,11 +18,23 @@
             </div>
           </el-image>
         </el-col>
-        <el-col :span="12"></el-col>
+        <el-col :span="12">
+          <div class="user">
+            <span style="margin-right: 12px">
+              {{ $store.state.user.first_name }}
+              {{ $store.state.user.last_name }}
+            </span>
+            <el-button plain round @click="onLogoutClick">Logout</el-button>
+          </div>
+        </el-col>
       </el-row>
     </el-header>
     <el-container>
-      <el-aside width="250px" class="aside">
+      <el-aside
+        v-if="!$route.path.startsWith('/login')"
+        width="250px"
+        class="aside"
+      >
         <el-menu
           class="image-bg"
           :style="{
@@ -48,14 +61,27 @@
               <span>Administrator</span>
             </template>
             <el-menu-item index="/calendar">Calendar</el-menu-item>
+            <el-menu-item index="/user" v-if="userPermission.admin === -1">User Management</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
       <el-container
-        style="background-color: #f1f2f3; height: calc(100vh - 80px)"
+        :style="{
+          backgroundColor: '#f1f2f3',
+          height: $route.path.startsWith('/login')
+            ? '100vh'
+            : 'calc(100vh - 80px',
+        }"
         direction="vertical"
       >
-        <el-main>
+        <el-main
+          :style="{
+            backgroundImage: $route.path.startsWith('/login')
+              ? !!`url('${constants.image.header_bg}')`
+              : '',
+          }"
+          :class="{ 'image-bg': $route.path.startsWith('/login') }"
+        >
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -65,13 +91,49 @@
 
 <script>
 export default {
+  created() {
+    if (
+      typeof window !== "undefined" &&
+      !this.$route.path.startsWith("/login")
+    ) {
+      if (
+        window.localStorage.getItem(btoa("userid")) === null ||
+        window.localStorage.getItem(btoa("userid")) === "0"
+      ) {
+        this.$router.replace("/login");
+      } else {
+        this.auth(window.localStorage.getItem(btoa("userid")), (result) => {
+          if (result.data.status === "logout") {
+            this.$router.replace("/login");
+          }
+        });
+      }
+    }
+  },
   mounted() {
     console.log(this);
     this.getProgramlist();
     this.getProductlist();
     this.getCompliancylist();
   },
-  methods: {},
+  updated() {
+    if (
+      typeof window !== "undefined" &&
+      !this.$route.path.startsWith("/login")
+    ) {
+      if (
+        window.localStorage.getItem(btoa("userid")) === null ||
+        window.localStorage.getItem(btoa("userid")) === "0"
+      ) {
+        this.$router.replace("/login");
+      }
+    }
+  },
+  methods: {
+    onLogoutClick() {
+      this.logout(this.$store.state.user.userid);
+    },
+  },
 };
 </script>
 
@@ -91,6 +153,11 @@ export default {
     &.is-active
       color #fcee01
       background-color transparent
+
+.user
+  color #ffffff
+  line-height 80px
+  text-align right
 </style>
 
 <style lang="stylus">

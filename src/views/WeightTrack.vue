@@ -113,15 +113,13 @@
         >
       </el-form-item>
     </el-form>
-    <el-divider v-if="attendanceList.length > 0"></el-divider>
+    <el-divider></el-divider>
     <v-chart
-      v-if="attendanceList.length > 0"
       :options="polar"
       autoresize
     ></v-chart>
-    <el-divider v-if="attendanceList.length > 0"></el-divider>
+    <el-divider></el-divider>
     <el-table
-      v-if="attendanceList.length > 0"
       :data="attendanceList"
       border
       style="width: 100%"

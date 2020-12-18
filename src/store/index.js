@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import program from "./program";
 import product from "./product";
 import compliancy from "./compliancy";
+import user from "./user";
 
 Vue.use(Vuex);
 
@@ -38,6 +39,7 @@ export default new Vuex.Store(
     },
     program,
     product,
-    compliancy
+    compliancy,
+    user
   )
 );
