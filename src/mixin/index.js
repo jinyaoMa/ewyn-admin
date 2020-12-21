@@ -6,7 +6,8 @@ export default {
       customerList: [],
       customerPhone: [],
       attendanceList: [],
-      measurementList: []
+      measurementList: [],
+      userList: []
     };
   },
   computed: {
@@ -95,6 +96,13 @@ export default {
         .post(this.constants.string.server_base + "user/login", data)
         .then((result) => {
           typeof callback === "function" && callback(result);
+        });
+    },
+    getUserlist() {
+      this.$http
+        .get(this.constants.string.server_base + "user/all")
+        .then((result) => {
+          this.userList = result.data.data;
         });
     },
     getProgramlist() {
@@ -197,6 +205,36 @@ export default {
         .get(this.constants.string.server_base + `measurement/customer/${id}`)
         .then((result) => {
           this.measurementList = result.data.data;
+        });
+    },
+    addUser(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "user/add", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.userList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    editUser(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "user/edit", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.userList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    deleteUserById(id, callback) {
+      this.$http
+        .get(this.constants.string.server_base + `user/deactivate/${id}`)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.userList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
         });
     },
     addCustomer(data, callback) {

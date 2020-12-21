@@ -32,11 +32,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SIGN));
 if (process.argv.length > 2 && process.argv[2] === "--prod") {
-  app.use(express.static(path.join(__dirname, "dist")));
   app.all("*", function(req, res, next) {
     res.header("Access-Control-Allow-Methods", "POST,GET");
     next();
   });
+  app.use(express.static(path.join(__dirname, "dist")));
 } else {
   const cors = require("cors");
   const corsOptions = {
@@ -85,7 +85,7 @@ function autoLoadFile(directory, useSubdirectories = false, extList = [".js"]) {
 
 // Auth
 app.use(function(req, res, next) {
-  if (req.url.startsWith("/api/user")) {
+  if (req.url.startsWith("/api/user/login")) {
     next();
   } else {
     if (
@@ -105,6 +105,7 @@ app.use(function(req, res, next) {
               });
               console.log(err);
             } else if (result.length > 0) {
+              req.permission = result[0].permission;
               next();
             } else {
               res.json({

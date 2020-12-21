@@ -7,6 +7,7 @@ import Calendar from "../views/Calendar.vue";
 import WeightTrack from "../views/WeightTrack.vue";
 import Login from "../views/Login.vue";
 import User from "../views/User.vue";
+import Settings from "../views/Settings.vue";
 
 Vue.use(VueRouter);
 
@@ -45,6 +46,11 @@ const routes = [
     path: "/user",
     name: "User",
     component: User
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    component: Settings
   }
 ];
 

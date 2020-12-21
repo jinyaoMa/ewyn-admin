@@ -3,6 +3,195 @@ const crypto = require("crypto");
 module.exports = (express, db) => {
   var router = express.Router();
 
+  router.get("/deactivate/:id", function(req, res, next) {
+    if (
+      typeof req.permission === "string" &&
+      req.permission.includes("ADMIN:-1")
+    ) {
+      try {
+        const sql = `UPDATE user SET actived = 0 WHERE userid = ${parseInt(
+          req.params.id
+        )}`;
+        db.query(sql, (err, result) => {
+          if (err) {
+            res.json({
+              code: 204,
+              msg: "error"
+            });
+            console.log(err);
+          } else {
+            const sql = `SELECT userid, name, first_name, last_name, startdate, permission FROM user WHERE actived = 1 ORDER BY startdate DESC`;
+            db.query(sql, (err1, result1) => {
+              if (err1) {
+                res.json({
+                  code: 204,
+                  msg: "error"
+                });
+                console.log(err1);
+              } else {
+                res.json({
+                  code: 200,
+                  affectedRows: result.affectedRows,
+                  data: result1
+                });
+              }
+            });
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      res.json({
+        code: 204,
+        msg: "error"
+      });
+    }
+  });
+
+  router.post("/edit", function(req, res, next) {
+    if (
+      typeof req.permission === "string" &&
+      req.permission.includes("ADMIN:-1")
+    ) {
+      console.log(req.body);
+      try {
+        const firstname = req.body.firstname;
+        const lastname = req.body.lastname;
+        const username = req.body.username;
+        const adminLevel = req.body.adminLevel;
+        const userid = req.body.userid;
+        const sql = `UPDATE user SET first_name = ?,
+        last_name = ?,
+        name = ?,
+        permission = ?
+        WHERE userid = ?`;
+        const values = [
+          firstname,
+          lastname,
+          username,
+          `USER:1,ADMIN:${adminLevel}`,
+          parseInt(userid)
+        ];
+        db.query(sql, values, (err, result) => {
+          if (err) {
+            res.json({
+              code: 204,
+              msg: "error"
+            });
+            console.log(err);
+          } else {
+            const sql = `SELECT userid, name, first_name, last_name, startdate, permission FROM user WHERE actived = 1 ORDER BY startdate DESC`;
+            db.query(sql, (err1, result1) => {
+              if (err1) {
+                res.json({
+                  code: 204,
+                  msg: "error"
+                });
+                console.log(err1);
+              } else {
+                res.json({
+                  code: 200,
+                  affectedRows: result.affectedRows,
+                  data: result1
+                });
+              }
+            });
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      res.json({
+        code: 204,
+        msg: "error"
+      });
+    }
+  });
+
+  router.post("/add", function(req, res, next) {
+    if (
+      typeof req.permission === "string" &&
+      req.permission.includes("ADMIN:-1")
+    ) {
+      console.log(req.body);
+      try {
+        const firstname = req.body.firstname;
+        const lastname = req.body.lastname;
+        const username = req.body.username;
+        const adminLevel = req.body.adminLevel;
+        const sql = `INSERT INTO user
+        (first_name, last_name, name, permission)
+        VALUES ?`;
+        const values = [
+          [firstname, lastname, username, `USER:1,ADMIN:${adminLevel}`]
+        ];
+        db.query(sql, [values], (err, result) => {
+          if (err) {
+            res.json({
+              code: 204,
+              msg: "error"
+            });
+            console.log(err);
+          } else {
+            const sql = `SELECT userid, name, first_name, last_name, startdate, permission FROM user WHERE actived = 1 ORDER BY startdate DESC`;
+            db.query(sql, (err1, result1) => {
+              if (err1) {
+                res.json({
+                  code: 204,
+                  msg: "error"
+                });
+                console.log(err1);
+              } else {
+                res.json({
+                  code: 200,
+                  affectedRows: result.affectedRows,
+                  data: result1
+                });
+              }
+            });
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      res.json({
+        code: 204,
+        msg: "error"
+      });
+    }
+  });
+
+  router.get("/all", function(req, res, next) {
+    if (
+      typeof req.permission === "string" &&
+      req.permission.includes("ADMIN:-1")
+    ) {
+      const sql = `SELECT userid, name, first_name, last_name, startdate, permission FROM user WHERE actived = 1 ORDER BY startdate DESC`;
+      db.query(sql, (err, result) => {
+        if (err) {
+          res.json({
+            code: 204,
+            msg: "error"
+          });
+          console.log(err);
+        } else {
+          res.json({
+            code: 200,
+            data: result
+          });
+        }
+      });
+    } else {
+      res.json({
+        code: 204,
+        msg: "error"
+      });
+    }
+  });
+
   router.get("/logout/:id", function(req, res, next) {
     try {
       const sql = `UPDATE user SET access_token = '' WHERE userid = ? AND access_token = ?`;

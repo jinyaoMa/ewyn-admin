@@ -19,7 +19,7 @@
           </el-image>
         </el-col>
         <el-col :span="12">
-          <div class="user">
+          <div class="userInfo">
             <span style="margin-right: 12px">
               {{ $store.state.user.first_name }}
               {{ $store.state.user.last_name }}
@@ -62,6 +62,7 @@
             </template>
             <el-menu-item index="/calendar">Calendar</el-menu-item>
             <el-menu-item index="/user" v-if="userPermission.admin === -1">User Management</el-menu-item>
+            <el-menu-item index="/settings">Settings</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -154,7 +155,7 @@ export default {
       color #fcee01
       background-color transparent
 
-.user
+.userInfo
   color #ffffff
   line-height 80px
   text-align right
