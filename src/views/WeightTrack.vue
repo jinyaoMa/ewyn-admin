@@ -114,10 +114,7 @@
       </el-form-item>
     </el-form>
     <el-divider></el-divider>
-    <v-chart
-      :options="polar"
-      autoresize
-    ></v-chart>
+    <v-chart :options="polar" autoresize></v-chart>
     <el-divider></el-divider>
     <el-table
       :data="attendanceList"
@@ -140,7 +137,7 @@
         show-overflow-tooltip
         sortable
         prop="weight"
-        label="Weight"
+        label="Weight (lb)"
       ></el-table-column>
     </el-table>
   </div>
@@ -213,6 +210,7 @@ export default {
       },
       polar: {
         // Make gradient line here
+        /*
         visualMap: {
           show: false,
           type: "continuous",
@@ -220,6 +218,7 @@ export default {
           min: 0,
           max: 0, // dateList.length - 1,
         },
+        */
         title: {
           left: "center",
           text: "",
@@ -235,7 +234,7 @@ export default {
         },
         series: {
           type: "line",
-          showSymbol: false,
+          showSymbol: true,
           data: [], // valueList,
         },
       },
@@ -313,10 +312,15 @@ export default {
             const valueList = result.data.data.map((item) => {
               return item.weight;
             });
-            this.polar.visualMap.max = dateList.length - 1;
+            // this.polar.visualMap.max = dateList.length - 1;
             this.polar.xAxis.data = dateList;
             this.polar.series.data = valueList;
-            this.polar.title.text = valueList.length > 0 ? `Weight Change: ${valueList[valueList.length - 1] - valueList[0]}` : 'No Data';
+            this.polar.title.text =
+              valueList.length > 0
+                ? `Weight Change (lb): ${
+                    valueList[valueList.length - 1] - valueList[0]
+                  }`
+                : "No Data";
 
             this.$message({
               message: `View from ${this.form.startDate} to ${this.form.endDate}`,

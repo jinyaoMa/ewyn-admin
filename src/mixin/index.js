@@ -7,7 +7,8 @@ export default {
       customerPhone: [],
       attendanceList: [],
       measurementList: [],
-      userList: []
+      userList: [],
+      programlist: []
     };
   },
   computed: {
@@ -110,6 +111,7 @@ export default {
         this.$http
           .get(this.constants.string.server_base + "program/all")
           .then((result) => {
+            this.programlist = result.data.data;
             this.$store.dispatch("setProgramlist", result.data.data);
           });
       }

@@ -32,7 +32,7 @@
     <el-container>
       <el-aside
         v-if="!$route.path.startsWith('/login')"
-        width="250px"
+        width="230px"
         class="aside"
       >
         <el-menu
@@ -61,7 +61,9 @@
               <span>Administrator</span>
             </template>
             <el-menu-item index="/calendar">Calendar</el-menu-item>
-            <el-menu-item index="/user" v-if="userPermission.admin === -1">User Management</el-menu-item>
+            <el-menu-item index="/user" v-if="userPermission.admin === -1"
+              >User Management</el-menu-item
+            >
             <el-menu-item index="/settings">Settings</el-menu-item>
           </el-submenu>
         </el-menu>
@@ -139,6 +141,10 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.App
+  min-width 1024px
+  overflow hidden
+  
 .header
   >>> .el-image__inner
     object-position left
@@ -159,6 +165,9 @@ export default {
   color #ffffff
   line-height 80px
   text-align right
+
+>>> .el-date-editor
+  max-width 100%
 </style>
 
 <style lang="stylus">

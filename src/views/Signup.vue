@@ -165,7 +165,7 @@
           placeholder="Pick a date"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="Start Weight">
+      <el-form-item label="Start Weight (lb)">
         <el-input-number
           v-model="form.startWeight"
           :precision="2"
@@ -174,7 +174,7 @@
           controls-position="right"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="Goal Weight">
+      <el-form-item label="Goal Weight (lb)">
         <el-input-number
           v-model="form.goalWeight"
           :precision="2"

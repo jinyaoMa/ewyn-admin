@@ -98,7 +98,7 @@
           placeholder="Pick a date"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="Weight">
+      <el-form-item label="Weight (lb)">
         <el-input-number
           v-model="form.weight"
           :precision="2"
@@ -180,7 +180,7 @@
         sortable
         width="150px"
         prop="weight"
-        label="Weight"
+        label="Weight (lb)"
       ></el-table-column>
       <el-table-column
         show-overflow-tooltip
