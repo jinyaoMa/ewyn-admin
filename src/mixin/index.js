@@ -8,7 +8,10 @@ export default {
       attendanceList: [],
       measurementList: [],
       userList: [],
-      programlist: []
+      programlist: [],
+      productlist: [],
+      compliancylist: [],
+      purchaseList: []
     };
   },
   computed: {
@@ -107,32 +110,28 @@ export default {
         });
     },
     getProgramlist() {
-      if (this.$store.state.programlist.length < 1) {
-        this.$http
-          .get(this.constants.string.server_base + "program/all")
-          .then((result) => {
-            this.programlist = result.data.data;
-            this.$store.dispatch("setProgramlist", result.data.data);
-          });
-      }
+      this.$http
+        .get(this.constants.string.server_base + "program/all")
+        .then((result) => {
+          this.programlist = JSON.parse(JSON.stringify(result.data.data));
+          this.$store.dispatch("setProgramlist", result.data.data);
+        });
     },
     getProductlist() {
-      if (this.$store.state.productlist.length < 1) {
-        this.$http
-          .get(this.constants.string.server_base + "product/all")
-          .then((result) => {
-            this.$store.dispatch("setProductlist", result.data.data);
-          });
-      }
+      this.$http
+        .get(this.constants.string.server_base + "product/all")
+        .then((result) => {
+          this.productlist = result.data.data;
+          this.$store.dispatch("setProductlist", result.data.data);
+        });
     },
     getCompliancylist() {
-      if (this.$store.state.compliancylist.length < 1) {
-        this.$http
-          .get(this.constants.string.server_base + "compliancy/all")
-          .then((result) => {
-            this.$store.dispatch("setCompliancylist", result.data.data);
-          });
-      }
+      this.$http
+        .get(this.constants.string.server_base + "compliancy/all")
+        .then((result) => {
+          this.compliancylist = result.data.data;
+          this.$store.dispatch("setCompliancylist", result.data.data);
+        });
     },
     getCustomerlist() {
       this.$http
@@ -160,6 +159,13 @@ export default {
         .post(this.constants.string.server_base + "customer/search", data)
         .then((result) => {
           typeof callback === "function" && callback(result.data);
+        });
+    },
+    getPurchaseById(id) {
+      this.$http
+        .get(this.constants.string.server_base + `purchase/customer/${id}`)
+        .then((result) => {
+          this.purchaseList = result.data.data;
         });
     },
     getAttendancelist() {
@@ -239,6 +245,122 @@ export default {
           typeof callback === "function" && callback(result);
         });
     },
+    resetUserPasswordById(id, callback) {
+      this.$http
+        .get(this.constants.string.server_base + `user/resetPassword/${id}`)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.userList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    setUserPassword(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "user/setPassword", data)
+        .then((result) => {
+          typeof callback === "function" && callback(result);
+        });
+    },
+    addProduct(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "product/add", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.productlist = JSON.parse(JSON.stringify(result.data.data));
+            this.$store.dispatch("setProductlist", result.data.data);
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    editProduct(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "product/edit", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.productlist = JSON.parse(JSON.stringify(result.data.data));
+            this.$store.dispatch("setProductlist", result.data.data);
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    deleteProductById(id, callback) {
+      this.$http
+        .get(this.constants.string.server_base + `product/delete/${id}`)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.productlist = JSON.parse(JSON.stringify(result.data.data));
+            this.$store.dispatch("setProductlist", result.data.data);
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    addCompliancy(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "compliancy/add", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.compliancylist = JSON.parse(JSON.stringify(result.data.data));
+            this.$store.dispatch("setCompliancylist", result.data.data);
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    editCompliancy(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "compliancy/edit", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.compliancylist = JSON.parse(JSON.stringify(result.data.data));
+            this.$store.dispatch("setCompliancylist", result.data.data);
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    deleteCompliancyById(id, callback) {
+      this.$http
+        .get(this.constants.string.server_base + `compliancy/delete/${id}`)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.compliancylist = JSON.parse(JSON.stringify(result.data.data));
+            this.$store.dispatch("setCompliancylist", result.data.data);
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    addProgram(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "program/add", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.programlist = JSON.parse(JSON.stringify(result.data.data));
+            this.$store.dispatch("setProgramlist", result.data.data);
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    editProgram(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "program/edit", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.programlist = JSON.parse(JSON.stringify(result.data.data));
+            this.$store.dispatch("setProgramlist", result.data.data);
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    deleteProgramById(id, callback) {
+      this.$http
+        .get(this.constants.string.server_base + `program/delete/${id}`)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.programlist = JSON.parse(JSON.stringify(result.data.data));
+            this.$store.dispatch("setProgramlist", result.data.data);
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
     addCustomer(data, callback) {
       this.$http
         .post(this.constants.string.server_base + "customer/add", data)
@@ -298,6 +420,39 @@ export default {
         .then((result) => {
           if (result.data.affectedRows === 1) {
             this.attendanceList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    addPurcahse(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "purchase/add", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.purchaseList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    editPurcahse(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "purchase/edit", data)
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.purchaseList = result.data.data;
+          }
+          typeof callback === "function" && callback(result);
+        });
+    },
+    deletePurcahse(id, data, callback) {
+      this.$http
+        .post(
+          this.constants.string.server_base + `purchase/delete/${id}`,
+          data
+        )
+        .then((result) => {
+          if (result.data.affectedRows === 1) {
+            this.purchaseList = result.data.data;
           }
           typeof callback === "function" && callback(result);
         });

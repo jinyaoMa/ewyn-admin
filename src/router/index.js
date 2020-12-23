@@ -8,6 +8,7 @@ import WeightTrack from "../views/WeightTrack.vue";
 import Login from "../views/Login.vue";
 import User from "../views/User.vue";
 import Settings from "../views/Settings.vue";
+import Purchase from "../views/Purchase.vue";
 
 Vue.use(VueRouter);
 
@@ -51,6 +52,11 @@ const routes = [
     path: "/settings",
     name: "Settings",
     component: Settings
+  },
+  {
+    path: "/purchase",
+    name: "Purchase",
+    component: Purchase
   }
 ];
 

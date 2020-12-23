@@ -3,6 +3,171 @@ const crypto = require("crypto");
 module.exports = (express, db) => {
   var router = express.Router();
 
+  router.post("/setPassword", function(req, res, next) {
+    const algorithm = "aes-256-cbc";
+    const clearEncoding = "utf8";
+    const cipherEncoding = "base64";
+    if (typeof req.signedCookies.access_token === "string") {
+      try {
+        const userid = req.body.a;
+        const encrypted = req.body.b;
+        const key = req.body.c;
+        const iv = req.body.d;
+
+        const encTemp = encrypted.split("eWyn.");
+        if (encTemp.length === 2) {
+          const plainChunks = [];
+          const decipher = crypto.createDecipheriv(algorithm, key, iv);
+          encTemp.forEach((str) => {
+            plainChunks.push(
+              decipher.update(str, cipherEncoding, clearEncoding)
+            );
+          });
+          plainChunks.push(decipher.final(clearEncoding));
+          const decrypted = JSON.parse(plainChunks.join(""));
+          if (
+            typeof decrypted.oldPassword === "string" &&
+            typeof decrypted.password === "string" &&
+            parseInt(decrypted.userid) === parseInt(userid)
+          ) {
+            let cipher = crypto.createCipheriv(
+              algorithm,
+              process.env.PASSWORD_KEY,
+              process.env.PASSWORD_IV
+            );
+            let cipherChunks = [];
+            cipherChunks.push(
+              cipher.update(
+                decrypted.oldPassword,
+                clearEncoding,
+                cipherEncoding
+              )
+            );
+            cipherChunks.push(cipher.final(cipherEncoding));
+            const encryptedOldPassword = cipherChunks.join("");
+
+            cipher = crypto.createCipheriv(
+              algorithm,
+              process.env.PASSWORD_KEY,
+              process.env.PASSWORD_IV
+            );
+            cipherChunks = [];
+            cipherChunks.push(
+              cipher.update(decrypted.password, clearEncoding, cipherEncoding)
+            );
+            cipherChunks.push(cipher.final(cipherEncoding));
+            const encryptedPassword = cipherChunks.join("");
+
+            db.query(
+              `UPDATE user SET password = ? WHERE userid = ? AND access_token = ? AND password = ?`,
+              [
+                encryptedPassword,
+                parseInt(userid),
+                req.signedCookies.access_token,
+                encryptedOldPassword
+              ],
+              (err, result) => {
+                if (err) {
+                  res.json({
+                    code: 204,
+                    msg: "error"
+                  });
+                  console.log(err);
+                } else {
+                  res.json({
+                    code: 200,
+                    affectedRows: result.affectedRows
+                  });
+                }
+              }
+            );
+          } else {
+            res.json({
+              code: 204,
+              msg: "error"
+            });
+          }
+        } else {
+          res.json({
+            code: 204,
+            msg: "error"
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      res.json({
+        code: 200,
+        status: "logout"
+      });
+    }
+  });
+
+  router.get("/resetPassword/:id", function(req, res, next) {
+    const algorithm = "aes-256-cbc";
+    const clearEncoding = "utf8";
+    const cipherEncoding = "base64";
+    if (
+      typeof req.permission === "string" &&
+      req.permission.includes("ADMIN:-1")
+    ) {
+      try {
+        const password = process.env.PASSWORD_ORIGINAL;
+        const cipher = crypto.createCipheriv(
+          algorithm,
+          process.env.PASSWORD_KEY,
+          process.env.PASSWORD_IV
+        );
+        const cipherChunks = [];
+        cipherChunks.push(
+          cipher.update(password, clearEncoding, cipherEncoding)
+        );
+        cipherChunks.push(cipher.final(cipherEncoding));
+        const encryptedPassword = cipherChunks.join("");
+
+        db.query(
+          `UPDATE user SET password = ? WHERE userid = ?`,
+          [encryptedPassword, parseInt(req.params.id)],
+          (err, result) => {
+            if (err) {
+              res.json({
+                code: 204,
+                msg: "error"
+              });
+              console.log(err);
+            } else {
+              const sql = `SELECT userid, name, first_name, last_name, startdate, permission FROM user WHERE actived = 1 ORDER BY startdate DESC`;
+              db.query(sql, (err1, result1) => {
+                if (err1) {
+                  res.json({
+                    code: 204,
+                    msg: "error"
+                  });
+                  console.log(err1);
+                } else {
+                  res.json({
+                    code: 200,
+                    affectedRows: result.affectedRows,
+                    plain: password,
+                    data: result1
+                  });
+                }
+              });
+            }
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      res.json({
+        code: 204,
+        msg: "error"
+      });
+    }
+  });
+
   router.get("/deactivate/:id", function(req, res, next) {
     if (
       typeof req.permission === "string" &&

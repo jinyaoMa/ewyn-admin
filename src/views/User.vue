@@ -46,7 +46,7 @@
       </el-form-item>
     </el-form>
     <el-divider></el-divider>
-    <el-table :data="userList" border style="width: 100%" max-height="500">
+    <el-table :data="userList" border style="width: 100%">
       <el-table-column
         show-overflow-tooltip
         sortable
@@ -85,7 +85,7 @@
         prop="permission"
         label="Permission"
       ></el-table-column>
-      <el-table-column fixed="right" label="Operation" width="170">
+      <el-table-column fixed="right" label="Operation" width="300">
         <template slot-scope="scope">
           <el-button
             @click="handleEditClick(scope.row)"
@@ -100,6 +100,13 @@
             size="small"
           >
             Inactivate
+          </el-button>
+          <el-button
+            @click="handleResetClick(scope.row)"
+            type="info"
+            size="small"
+          >
+            Reset Password
           </el-button>
         </template>
       </el-table-column>
@@ -148,13 +155,13 @@ export default {
             firstname: c.first_name,
             lastname: c.last_name,
             telephone: c.telephone,
-            goalDate: moment(c.goal_date).format("YYYY-MM-DD"),
+            goalDate: moment(c.goal_date).add(1, 'd').format("YYYY-MM-DD"),
             email: c.email,
             program: c.programid,
             reason: c.reason,
             product: c.productid,
             recommend: c.recommend,
-            startDate: moment(c.start_date).format("YYYY-MM-DD"),
+            startDate: moment(c.start_date).add(1, 'd').format("YYYY-MM-DD"),
             startWeight: c.start_weight,
             goalWeight: c.goal_weight,
           };
@@ -273,7 +280,7 @@ export default {
     handleDeleteClick(row) {
       this.$confirm(
         `User ${row.first_name} ${row.last_name} (username: ${row.name}) will be inactivated`,
-        "inactivated",
+        "inactivate",
         {
           confirmButtonText: "Confirm",
           cancelButtonText: "Cancel",
@@ -292,6 +299,28 @@ export default {
         })
         .catch(() => {});
     },
+    handleResetClick(row) {
+      this.$confirm(
+        `Password for User ${row.first_name} ${row.last_name} (username: ${row.name}) will be reset`,
+        "Reset password",
+        {
+          confirmButtonText: "Confirm",
+          cancelButtonText: "Cancel",
+          type: "danger",
+        }
+      )
+        .then(() => {
+          this.resetUserPasswordById(row.userid, (result) => {
+            if (result.data.affectedRows === 1) {
+              this.$message({
+                type: "success",
+                message: `Password for User ${row.first_name} ${row.last_name} (username: ${row.name}) reset to ${result.data.plain}!`,
+              });
+            }
+          });
+        })
+        .catch(() => {});
+    }
   },
 };
 </script>

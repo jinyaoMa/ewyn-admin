@@ -203,7 +203,6 @@
       :data="customerList"
       border
       style="width: 100%"
-      max-height="500"
     >
       <el-table-column
         show-overflow-tooltip
@@ -386,13 +385,13 @@ export default {
             firstname: c.first_name,
             lastname: c.last_name,
             telephone: c.telephone,
-            goalDate: moment(c.goal_date).format("YYYY-MM-DD"),
+            goalDate: moment(c.goal_date).add(1, 'd').format("YYYY-MM-DD"),
             email: c.email,
             program: c.programid,
             reason: c.reason,
             product: c.productid,
             recommend: c.recommend,
-            startDate: moment(c.start_date).format("YYYY-MM-DD"),
+            startDate: moment(c.start_date).add(1, 'd').format("YYYY-MM-DD"),
             startWeight: c.start_weight,
             goalWeight: c.goal_weight,
           };

@@ -120,7 +120,6 @@
       :data="attendanceList"
       border
       style="width: 100%"
-      max-height="500"
     >
       <el-table-column
         show-overflow-tooltip

@@ -188,7 +188,6 @@
       :data="measurementList"
       border
       style="width: 100%"
-      max-height="500"
     >
       <el-table-column
         show-overflow-tooltip
@@ -395,7 +394,7 @@ export default {
       this.editId = row.measurementid;
       this.form = {
         customer: row.customerid,
-        date: moment(row.date).format("YYYY-MM-DD"),
+        date: moment(row.date).add(1, 'd').format("YYYY-MM-DD"),
         phcInitial: row.phc_initial,
         weight: row.weight,
         bustChest: row.bust_chest,
@@ -444,7 +443,7 @@ export default {
     },
     handleDeleteClick(row) {
       this.$confirm(
-        `Record ${moment(row.date).format("YYYY-MM-DD")} (Weight: ${
+        `Record ${moment(row.date).add(1, 'd').format("YYYY-MM-DD")} (Weight: ${
           row.weight
         }) will be deleted`,
         "Delete",

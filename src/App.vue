@@ -14,7 +14,7 @@
             :src="'' /*constants.image.logo*/"
           >
             <div slot="error" class="image-slot">
-              <i class="el-icon-picture-outline"></i>
+              <i :class="!!'el-icon-picture-outline'"></i>
             </div>
           </el-image>
         </el-col>
@@ -54,6 +54,7 @@
             <el-menu-item index="/attendance">Attendance</el-menu-item>
             <el-menu-item index="/measurement">Measurement</el-menu-item>
             <el-menu-item index="/weightTrack">Weight Track</el-menu-item>
+            <el-menu-item index="/purchase">Purchase Guide</el-menu-item>
           </el-submenu>
           <el-submenu index="2">
             <template #title>
@@ -144,7 +145,7 @@ export default {
 .App
   min-width 1024px
   overflow hidden
-  
+
 .header
   >>> .el-image__inner
     object-position left

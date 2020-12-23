@@ -1,5 +1,5 @@
 <template>
-  <div class="attendance">
+  <div class="purchase">
     <el-dialog
       width="80%"
       title="Search customer"
@@ -91,52 +91,40 @@
           {{ customerString }}
         </el-button>
       </el-form-item>
-      <el-form-item label="Date">
+      <el-form-item label="Week">
+        <el-input-number
+          v-model="form.week"
+          :precision="0"
+          :step="1"
+          :min="1"
+        ></el-input-number>
+      </el-form-item>
+      <el-form-item label="Products">
+        <el-select
+          v-model="form.product"
+          placeholder="Product to purchase"
+          filterable
+        >
+          <el-option
+            v-for="product in $store.state.productlist"
+            :label="`${product.product_name} (${
+              parseInt(product.optional) === 0 ? 'Mandatory' : 'Optional'
+            })`"
+            :value="product.productid"
+            :key="product.productid"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="Due Date">
         <el-date-picker
-          v-model="form.date"
+          v-model="form.dueDate"
           type="date"
           placeholder="Pick a date"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="Weight (lb)">
-        <el-input-number
-          v-model="form.weight"
-          :precision="2"
-          :step="0.01"
-          :min="0"
-          controls-position="right"
-        ></el-input-number>
-      </el-form-item>
-      <el-form-item label="Product">
-        <el-select
-          v-model="form.product"
-          filterable
-          placeholder="Select your customer"
-        >
-          <el-option
-            v-for="compliancy in $store.state.compliancylist"
-            :key="compliancy.compliancyid"
-            :label="compliancy.compliancy_name"
-            :value="compliancy.compliancyid"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="Cardio">
-        <el-input v-model="form.cardio" placeholder="Cardio"></el-input>
-      </el-form-item>
-      <el-form-item label="Comments">
-        <el-input
-          type="textarea"
-          v-model="form.comment"
-          placeholder="Comments"
-          :show-word-limit="true"
-          maxlength="512"
-          :rows="3"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="DTR">
+      <el-form-item label="Sold Date">
         <el-date-picker
-          v-model="form.dtr"
+          v-model="form.soldDate"
           type="date"
           placeholder="Pick a date"
         ></el-date-picker>
@@ -146,7 +134,7 @@
           v-if="!isEdit && form.customer"
           type="primary"
           @click="onSubmit"
-          >Check In</el-button
+          >Submit</el-button
         >
         <el-button v-if="isEdit" type="primary" @click="onConfirm"
           >Confirm</el-button
@@ -156,63 +144,62 @@
         >
       </el-form-item>
     </el-form>
-    <el-divider v-if="!isEdit"></el-divider>
     <el-table
-      v-if="!isEdit"
-      :data="attendanceList"
+      :data="weeklyPurchaselist"
       border
       style="width: 100%"
+      row-key="purchaseid"
+      default-expand-all
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
       <el-table-column
         show-overflow-tooltip
         sortable
+        fixed="left"
+        width="90px"
+        prop="week"
+        label="Week"
+      ></el-table-column>
+      <el-table-column
+        show-overflow-tooltip
+        sortable
+        min-width="150px"
+        prop="product_name"
+        label="Products"
+      ></el-table-column>
+      <el-table-column
+        show-overflow-tooltip
+        sortable
         width="120px"
-        prop="date"
-        label="Date"
+        prop="optional"
+        label="Option"
       >
         <template slot-scope="scope">
-          {{ moment(scope.row.date) }}
+          <el-tag
+            :type="parseInt(scope.row.optional) === 0 ? 'success' : 'default'"
+          >
+            {{ parseInt(scope.row.optional) === 0 ? "Mandatory" : "Optional" }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column
-        show-overflow-tooltip
-        sortable
-        width="150px"
-        prop="weight"
-        label="Weight (lb)"
-      ></el-table-column>
-      <el-table-column
-        show-overflow-tooltip
-        sortable
-        width="180px"
-        label="Product"
-      >
-        <template slot-scope="scope">
-          {{ compliancyName(scope.row.compliancyid) }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        show-overflow-tooltip
-        sortable
-        width="180px"
-        prop="cardio"
-        label="Cardio"
-      ></el-table-column>
-      <el-table-column
-        show-overflow-tooltip
-        sortable
-        width="180px"
-        prop="comment"
-        label="Comments"
-      ></el-table-column>
       <el-table-column
         show-overflow-tooltip
         sortable
         width="160px"
-        label="Due to Return"
+        label="Due Date"
       >
         <template slot-scope="scope">
-          {{ moment(scope.row.dtr) }}
+          {{ moment(scope.row.due_date) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        show-overflow-tooltip
+        sortable
+        width="160px"
+        label="Sold Date"
+      >
+        <template slot-scope="scope">
+          {{ moment(scope.row.sold_date) }}
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="Operation" width="160">
@@ -241,7 +228,7 @@
 import moment from "moment";
 
 export default {
-  name: "attendance",
+  name: "purchase",
   data() {
     return {
       dialogFormVisible: false,
@@ -257,12 +244,10 @@ export default {
       customerString: "Search a customer",
       form: {
         customer: 0,
-        date: "",
-        weight: "",
+        week: 1,
         product: "",
-        cardio: "",
-        comment: "",
-        dtr: "",
+        dueDate: "",
+        soldDate: "",
       },
       isEdit: false,
       editId: 0,
@@ -270,15 +255,33 @@ export default {
   },
   mounted() {
     if (parseInt(this.$store.state.cid)) {
-      this.getAttendanceById(this.$store.state.cid);
       this.getCustomerById(this.$store.state.cid, (result) => {
         if (result.data && result.data.length === 1) {
           const c = result.data[0];
           this.customerString = `${c.first_name} ${c.last_name} (${c.telephone}, ${c.email})`;
           this.form.customer = this.$store.state.cid;
+          this.getPurchaseById(c.customerid);
         }
       });
     }
+    console.log(this);
+  },
+  computed: {
+    weeklyPurchaselist() {
+      const result = [];
+      this.purchaseList.forEach((item) => {
+        const resultItemIndex = result.findIndex((i) => i.week === item.week);
+        if (resultItemIndex >= 0) {
+          if (typeof result[resultItemIndex].children === "undefined") {
+            result[resultItemIndex].children = [];
+          }
+          result[resultItemIndex].children.push(item);
+        } else {
+          result.push(item);
+        }
+      });
+      return result;
+    },
   },
   methods: {
     handleDialogInnerSelect() {
@@ -294,7 +297,7 @@ export default {
       )
         .then(() => {
           this.form.customer = c.customerid;
-          this.getAttendanceById(c.customerid);
+          this.getPurchaseById(c.customerid);
           this.$store.dispatch("setCID", c.customerid);
           this.customerString = `${c.first_name} ${c.last_name} (${c.telephone}, ${c.email})`;
           this.dialogFormVisible = false;
@@ -326,8 +329,47 @@ export default {
     onSelectCustomerClick() {
       this.dialogFormVisible = true;
     },
+    handleEditClick(row) {
+      this.isEdit = true;
+      this.editId = row.purchaseid;
+      this.form = {
+        customer: row.customerid,
+        week: row.week,
+        product: row.productid,
+        dueDate: moment(row.due_date).add(1, "d").format("YYYY-MM-DD"),
+        soldDate: moment(row.sold_date).add(1, "d").format("YYYY-MM-DD"),
+      };
+    },
+    handleDeleteClick(row) {
+      this.$confirm(
+        `Record Week ${row.week} (Product: ${row.product_name}) will be deleted`,
+        "Delete",
+        {
+          confirmButtonText: "Confirm",
+          cancelButtonText: "Cancel",
+          type: "danger",
+        }
+      )
+        .then(() => {
+          this.deletePurcahse(
+            row.purchaseid,
+            {
+              customerid: this.form.customer,
+            },
+            (result) => {
+              if (result.data.affectedRows === 1) {
+                this.$message({
+                  type: "success",
+                  message: `Record Week ${row.week} (Product: ${row.product_name}) deleted!`,
+                });
+              }
+            }
+          );
+        })
+        .catch(() => {});
+    },
     onSubmit() {
-      this.addAttendance(
+      this.addPurcahse(
         {
           ...this.form,
           customerid: this.form.customer,
@@ -335,35 +377,19 @@ export default {
         (result) => {
           if (result.data.data) {
             this.$message({
-              message: "Checked in!",
+              message: "Record added!",
               type: "success",
             });
           }
         }
       );
     },
-    handleCustomerSelect(id) {
-      this.getAttendanceById(id);
-    },
-    handleEditClick(row) {
-      this.isEdit = true;
-      this.editId = row.attendanceid;
-      this.form = {
-        customer: row.customerid,
-        date: moment(row.date).add(1, 'd').format("YYYY-MM-DD"),
-        weight: row.weight,
-        product: row.compliancyid,
-        cardio: row.cardio,
-        comment: row.comment,
-        dtr: moment(row.dtr).add(1, 'd').format("YYYY-MM-DD"),
-      };
-    },
     onConfirm() {
-      this.editAttendance(
+      this.editPurcahse(
         {
           ...this.form,
           customerid: this.form.customer,
-          attendanceid: this.editId,
+          purchaseid: this.editId,
         },
         (result) => {
           if (result.data.affectedRows === 1) {
@@ -380,55 +406,21 @@ export default {
       const c = this.form.customer;
       this.form = {
         customer: c,
-        date: "",
-        weight: "",
+        week: 1,
         product: "",
-        cardio: "",
-        comment: "",
-        dtr: "",
+        dueDate: "",
+        soldDate: "",
       };
-      this.getAttendanceById(c);
+      this.getPurchaseById(c);
       this.isEdit = false;
       this.editId = 0;
-    },
-    handleDeleteClick(row) {
-      this.$confirm(
-        `Record ${moment(row.date).add(1, 'd').format("YYYY-MM-DD")} (Weight: ${
-          row.weight
-        }) will be deleted`,
-        "Delete",
-        {
-          confirmButtonText: "Confirm",
-          cancelButtonText: "Cancel",
-          type: "danger",
-        }
-      )
-        .then(() => {
-          this.deleteAttendance(
-            row.attendanceid,
-            {
-              customerid: this.form.customer,
-            },
-            (result) => {
-              if (result.data.affectedRows === 1) {
-                this.$message({
-                  type: "success",
-                  message: `Record ${moment(row.date).format(
-                    "YYYY-MM-DD"
-                  )} (Weight: ${row.weight}) deleted!`,
-                });
-              }
-            }
-          );
-        })
-        .catch(() => {});
     },
   },
 };
 </script>
 
 <style lang="stylus" scoped>
-.attendance
+.purchase
   padding 20px
   background-color #ffffff
 

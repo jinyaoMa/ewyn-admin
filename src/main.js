@@ -16,9 +16,7 @@ Vue.prototype.constants = constants;
 
 Vue.use(Element, { locale });
 
-axios.defaults.withCredentials = !(
-  process.argv.length > 2 && process.argv[2] === "--prod"
-);
+axios.defaults.withCredentials = process.env.NODE_ENV === "development";
 Vue.use(VueAxios, axios);
 
 Vue.mixin(mixin);

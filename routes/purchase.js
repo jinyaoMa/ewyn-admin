@@ -4,7 +4,7 @@ module.exports = (express, db) => {
   var router = express.Router();
 
   router.get("/all", function(req, res, next) {
-    const sql = `SELECT * FROM measurement m INNER JOIN customer c ON c.customerid = m.customerid WHERE c.actived = 1`;
+    const sql = `SELECT * FROM purchase a INNER JOIN customer c ON c.customerid = a.customerid WHERE c.actived = 1`;
     db.query(sql, (err, result) => {
       if (err) {
         res.json({
@@ -22,9 +22,12 @@ module.exports = (express, db) => {
   });
 
   router.get("/customer/:id", function(req, res, next) {
-    const sql = `SELECT * FROM measurement m INNER JOIN customer c ON c.customerid = m.customerid WHERE c.actived = 1 AND m.customerid = ${parseInt(
+    const sql = `SELECT * FROM purchase a
+    INNER JOIN customer c ON c.customerid = a.customerid
+    INNER JOIN product p ON p.productid = a.productid
+    WHERE c.actived = 1 AND a.customerid = ${parseInt(
       req.params.id
-    )} ORDER BY date DESC`;
+    )} ORDER BY week, due_date ASC`;
     db.query(sql, (err, result) => {
       if (err) {
         res.json({
@@ -44,30 +47,20 @@ module.exports = (express, db) => {
   router.post("/add", function(req, res, next) {
     console.log(req.body);
     try {
-      const date = req.body.date;
-      const phcInitial = req.body.phcInitial;
-      const weight = req.body.weight;
-      const bustChest = req.body.bustChest;
-      const waist = req.body.waist;
-      const midSection = req.body.midSection;
-      const hips = req.body.hips;
-      const rightArm = req.body.rightArm;
-      const rightThigh = req.body.rightThigh;
+      const week = req.body.week;
+      const product = req.body.product;
+      const dueDate = req.body.dueDate;
+      const soldDate = req.body.soldDate;
       const customerid = req.body.customerid;
-      const sql = `INSERT INTO measurement
-      (date, phc_initial, weight, bust_chest, waist, mid_section, hips, right_arm, right_thigh, customerid)
+      const sql = `INSERT INTO purchase
+      (week, productid, due_date, sold_date, customerid)
       VALUES ?`;
       const values = [
         [
-          moment(date).format("YYYY-MM-DD"),
-          phcInitial,
-          parseFloat(weight),
-          parseFloat(bustChest),
-          parseFloat(waist),
-          parseFloat(midSection),
-          parseFloat(hips),
-          parseFloat(rightArm),
-          parseFloat(rightThigh),
+          parseInt(week),
+          parseInt(product),
+          moment(dueDate).format("YYYY-MM-DD"),
+          moment(soldDate).format("YYYY-MM-DD"),
           parseInt(customerid)
         ]
       ];
@@ -79,9 +72,12 @@ module.exports = (express, db) => {
           });
           console.log(err);
         } else {
-          const sql = `SELECT * FROM measurement m INNER JOIN customer c ON c.customerid = m.customerid WHERE c.actived = 1 AND m.customerid = ${parseInt(
+          const sql = `SELECT * FROM purchase a
+          INNER JOIN customer c ON c.customerid = a.customerid
+          INNER JOIN product p ON p.productid = a.productid
+          WHERE c.actived = 1 AND a.customerid = ${parseInt(
             customerid
-          )} ORDER BY date DESC`;
+          )} ORDER BY week, due_date ASC`;
           db.query(sql, (err1, result1) => {
             if (err1) {
               res.json({
@@ -107,39 +103,24 @@ module.exports = (express, db) => {
   router.post("/edit", function(req, res, next) {
     console.log(req.body);
     try {
-      const date = req.body.date;
-      const phcInitial = req.body.phcInitial;
-      const weight = req.body.weight;
-      const bustChest = req.body.bustChest;
-      const waist = req.body.waist;
-      const midSection = req.body.midSection;
-      const hips = req.body.hips;
-      const rightArm = req.body.rightArm;
-      const rightThigh = req.body.rightThigh;
+      const week = req.body.week;
+      const product = req.body.product;
+      const dueDate = req.body.dueDate;
+      const soldDate = req.body.soldDate;
       const customerid = req.body.customerid;
-      const measurementid = req.body.measurementid;
-      const sql = `UPDATE measurement SET date = ?,
-      phc_initial = ?,
-      weight = ?,
-      bust_chest = ?,
-      waist = ?,
-      mid_section = ?,
-      hips = ?,
-      right_arm = ?,
-      right_thigh = ?
-      WHERE customerid = ? AND measurementid = ?`;
+      const purchaseid = req.body.purchaseid;
+      const sql = `UPDATE purchase SET week = ?,
+      productid = ?,
+      due_date = ?,
+      sold_date = ?
+      WHERE customerid = ? AND purchaseid = ?`;
       const values = [
-        moment(date).format("YYYY-MM-DD"),
-        phcInitial,
-        parseFloat(weight),
-        parseFloat(bustChest),
-        parseFloat(waist),
-        parseFloat(midSection),
-        parseFloat(hips),
-        parseFloat(rightArm),
-        parseFloat(rightThigh),
+        parseInt(week),
+        parseInt(product),
+        moment(dueDate).format("YYYY-MM-DD"),
+        moment(soldDate).format("YYYY-MM-DD"),
         parseInt(customerid),
-        parseInt(measurementid)
+        parseInt(purchaseid)
       ];
       db.query(sql, values, (err, result) => {
         if (err) {
@@ -149,9 +130,12 @@ module.exports = (express, db) => {
           });
           console.log(err);
         } else {
-          const sql = `SELECT * FROM measurement m INNER JOIN customer c ON c.customerid = m.customerid WHERE c.actived = 1 AND m.customerid = ${parseInt(
+          const sql = `SELECT * FROM purchase a
+          INNER JOIN customer c ON c.customerid = a.customerid
+          INNER JOIN product p ON p.productid = a.productid
+          WHERE c.actived = 1 AND a.customerid = ${parseInt(
             customerid
-          )} ORDER BY date DESC`;
+          )} ORDER BY week, due_date ASC`;
           db.query(sql, (err1, result1) => {
             if (err1) {
               res.json({
@@ -178,7 +162,7 @@ module.exports = (express, db) => {
     console.log(req.body);
     try {
       const customerid = req.body.customerid;
-      const sql = `DELETE FROM measurement WHERE measurementid = ${parseInt(
+      const sql = `DELETE FROM purchase WHERE purchaseid = ${parseInt(
         req.params.id
       )}`;
       db.query(sql, (err, result) => {
@@ -189,9 +173,12 @@ module.exports = (express, db) => {
           });
           console.log(err);
         } else {
-          const sql = `SELECT * FROM measurement m INNER JOIN customer c ON c.customerid = m.customerid WHERE c.actived = 1 AND m.customerid = ${parseInt(
+          const sql = `SELECT * FROM purchase a
+          INNER JOIN customer c ON c.customerid = a.customerid
+          INNER JOIN product p ON p.productid = a.productid
+          WHERE c.actived = 1 AND a.customerid = ${parseInt(
             customerid
-          )} ORDER BY date DESC`;
+          )} ORDER BY week, due_date ASC`;
           db.query(sql, (err1, result1) => {
             if (err1) {
               res.json({
