@@ -129,7 +129,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this);
+    // console.log(this);
     this.getProgramlist();
     this.getProductlist();
     this.getCompliancylist();
