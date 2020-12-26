@@ -85,7 +85,7 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-form :inline="false" :model="form" class="form" label-width="150px">
+    <el-form :inline="false" :model="form" class="form" :label-width="isNarrow ? '' : '150px'">
       <el-form-item>
         <el-switch
           v-model="form.action"

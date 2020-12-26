@@ -85,7 +85,7 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-form :inline="false" :model="form" class="form" label-width="150px">
+    <el-form :inline="false" :model="form" class="form" :label-width="isNarrow ? 'auto' : '100px'">
       <el-form-item label="Customer">
         <el-button type="default" @click="onSelectCustomerClick">
           {{ customerString }}

@@ -5,6 +5,7 @@
         <div v-if="data.type != 'current-month'">
           {{ date.getDate() }}
           {{ data.isSelected ? "✔️" : "" }}
+          <span class="dot">{{ dateCount(data.day) }}</span>
         </div>
         <el-popover
           placement="bottom"
@@ -113,6 +114,7 @@
           <div slot="reference" style="height: 100%">
             {{ date.getDate() }}
             {{ data.isSelected ? "✔️" : "" }}
+            <span class="dot">{{ dateCount(data.day) }}</span>
           </div>
         </el-popover>
       </template>
@@ -132,11 +134,25 @@ export default {
   },
   mounted() {
     this.getAttendancelist();
+    this.getAttendanceDateCount();
   },
   computed: {
     _gridData(date) {
       return function (params) {
         return this.getAttendanceByDate(params);
+      };
+    },
+    dateCount() {
+      return function (date) {
+        const list = this.attendanceDateCount.filter(
+          (item) =>
+            moment(date).subtract(1, "days").format("YYYY-MM-DD") ===
+            moment(item.date).format("YYYY-MM-DD")
+        );
+        if (list.length > 0) {
+          return list[0].count || 0;
+        }
+        return "";
       };
     },
   },
@@ -168,4 +184,13 @@ export default {
 
 >>> .el-table__empty-text
   text-align left
+
+.dot
+  display inline-block
+  font-size 0.8rem
+  line-height 1.5
+  padding 0 0.25rem
+  border-radius 0.25rem
+  background-color #ff6666
+  color #ffffff
 </style>

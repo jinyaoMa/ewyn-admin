@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+/*
 import Signup from "../views/Signup.vue";
 import Attendance from "../views/Attendance.vue";
 import Measurement from "../views/Measurement.vue";
@@ -9,6 +10,7 @@ import Login from "../views/Login.vue";
 import User from "../views/User.vue";
 import Settings from "../views/Settings.vue";
 import Purchase from "../views/Purchase.vue";
+*/
 
 Vue.use(VueRouter);
 
@@ -16,47 +18,59 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: Login
+    component: () =>
+      import(/* webpackChunkName: "login" */ "../views/Login.vue")
   },
   {
     path: "/",
     name: "Signup",
-    component: Signup
+    component: () =>
+      import(/* webpackChunkName: "signup" */ "../views/Signup.vue")
   },
   {
     path: "/attendance",
     name: "Attendance",
-    component: Attendance
+    component: () =>
+      import(/* webpackChunkName: "attendance" */ "../views/Attendance.vue")
   },
   {
     path: "/measurement",
     name: "Measurement",
-    component: Measurement
+    component: () =>
+      import(/* webpackChunkName: "measurement" */ "../views/Measurement.vue")
   },
   {
     path: "/calendar",
     name: "Calendar",
-    component: Calendar
+    component: () =>
+      import(/* webpackChunkName: "calendar" */ "../views/Calendar.vue")
   },
   {
     path: "/weightTrack",
     name: "WeightTrack",
-    component: WeightTrack
+    component: () =>
+      import(/* webpackChunkName: "weightTrack" */ "../views/WeightTrack.vue")
   },
   {
     path: "/user",
     name: "User",
-    component: User
+    component: () => import(/* webpackChunkName: "user" */ "../views/User.vue")
   },
   {
     path: "/settings",
     name: "Settings",
-    component: Settings
+    component: () =>
+      import(/* webpackChunkName: "settings" */ "../views/Settings.vue")
   },
   {
     path: "/purchase",
     name: "Purchase",
-    component: Purchase
+    component: () =>
+      import(/* webpackChunkName: "purchase" */ "../views/Purchase.vue")
+  },
+  {
+    path: "*",
+    redirect: "/"
   }
 ];
 

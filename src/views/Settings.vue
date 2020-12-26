@@ -5,7 +5,7 @@
       :inline="false"
       :model="formPassword"
       class="form"
-      label-width="150px"
+      :label-width="isNarrow ? '' : '150px'"
     >
       <el-form-item label="Old Password">
         <el-input
@@ -38,7 +38,11 @@
     </el-form>
     <el-divider v-if="userPermission.admin === -1"></el-divider>
     <h3 class="title" v-if="userPermission.admin === -1">Manage Programs</h3>
-    <el-form :inline="false" class="form" v-if="userPermission.admin === -1 && programlist.length">
+    <el-form
+      :inline="false"
+      class="form"
+      v-if="userPermission.admin === -1 && programlist.length"
+    >
       <el-form-item
         v-for="(program, i) in programlist"
         :key="program.programid"
@@ -78,7 +82,11 @@
     </el-form>
     <el-divider v-if="userPermission.admin === -1"></el-divider>
     <h3 class="title" v-if="userPermission.admin === -1">Manage Products</h3>
-    <el-form :inline="false" class="form" v-if="userPermission.admin === -1 && productlist.length">
+    <el-form
+      :inline="false"
+      class="form"
+      v-if="userPermission.admin === -1 && productlist.length"
+    >
       <el-form-item
         v-for="(product, i) in productlist"
         :key="product.productid"
@@ -98,7 +106,11 @@
             Confirm Edit
           </el-button>
           <template slot="append">
-            <el-select v-model="product.optional" placeholder="Option">
+            <el-select
+              v-model="product.optional"
+              placeholder="Option"
+              :style="{ width: '120px' }"
+            >
               <el-option label="Mandatory" :value="0"> </el-option>
               <el-option label="Optional" :value="1"> </el-option>
             </el-select>
@@ -113,7 +125,11 @@
       <el-form-item>
         <el-input v-model="newProduct.name" placeholder="New Product">
           <template slot="append">
-            <el-select v-model="newProduct.option" placeholder="Option">
+            <el-select
+              v-model="newProduct.option"
+              placeholder="Option"
+              :style="{ width: '120px' }"
+            >
               <el-option label="Mandatory" :value="0"> </el-option>
               <el-option label="Optional" :value="1"> </el-option>
             </el-select>
@@ -128,7 +144,11 @@
     </el-form>
     <el-divider v-if="userPermission.admin === -1"></el-divider>
     <h3 class="title" v-if="userPermission.admin === -1">Manage Compliancy</h3>
-    <el-form :inline="false" class="form" v-if="userPermission.admin === -1 && compliancylist.length">
+    <el-form
+      :inline="false"
+      class="form"
+      v-if="userPermission.admin === -1 && compliancylist.length"
+    >
       <el-form-item
         v-for="(compliancy, i) in compliancylist"
         :key="compliancy.compliancyid"

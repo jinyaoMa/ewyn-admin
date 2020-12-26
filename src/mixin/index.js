@@ -1,4 +1,5 @@
 import _moment from "moment";
+import Vuex from "vuex";
 
 export default {
   data() {
@@ -6,6 +7,7 @@ export default {
       customerList: [],
       customerPhone: [],
       attendanceList: [],
+      attendanceDateCount: [],
       measurementList: [],
       userList: [],
       programlist: [],
@@ -15,6 +17,9 @@ export default {
     };
   },
   computed: {
+    ...Vuex.mapGetters({
+      isNarrow: 'isNarrow',
+    }),
     moment(str) {
       return function(params) {
         return _moment(params).format("YYYY-MM-DD");
@@ -75,6 +80,13 @@ export default {
     }
   },
   methods: {
+    onResize() {
+      if (window.innerWidth < 768) {
+        this.$store.dispatch("setNarrow", true);
+      } else {
+        this.$store.dispatch("setNarrow", false);
+      }
+    },
     logout(id) {
       this.$http
         .get(this.constants.string.server_base + `user/logout/${id}`)
@@ -173,6 +185,13 @@ export default {
         .get(this.constants.string.server_base + "attendance/all")
         .then((result) => {
           this.attendanceList = result.data.data;
+        });
+    },
+    getAttendanceDateCount() {
+      this.$http
+        .get(this.constants.string.server_base + "attendance/date/count")
+        .then((result) => {
+          this.attendanceDateCount = result.data.data;
         });
     },
     getAttendanceById(id) {
@@ -446,10 +465,7 @@ export default {
     },
     deletePurcahse(id, data, callback) {
       this.$http
-        .post(
-          this.constants.string.server_base + `purchase/delete/${id}`,
-          data
-        )
+        .post(this.constants.string.server_base + `purchase/delete/${id}`, data)
         .then((result) => {
           if (result.data.affectedRows === 1) {
             this.purchaseList = result.data.data;

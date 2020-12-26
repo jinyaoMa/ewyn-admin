@@ -1,25 +1,37 @@
 <template>
-  <el-container class="App" style="height: 100%" direction="vertical">
+  <el-container
+    class="App"
+    direction="vertical"
+    :style="{
+      height: isNarrow ? 'auto' : '100%',
+    }"
+  >
     <el-header
       v-if="!$route.path.startsWith('/login')"
-      height="80px"
+      :height="isNarrow ? 'auto' : '80px'"
       class="header image-bg"
       :style="{ backgroundImage: !!`url('${constants.image.header_bg}')` }"
     >
-      <el-row type="flex" justify="space-between">
-        <el-col :span="12">
+      <el-row :type="isNarrow ? '' : 'flex'" justify="space-between">
+        <el-col :span="isNarrow ? 24 : 12">
           <el-image
             style="height: 60px; padding: 10px 0"
             fit="contain"
             :src="'' /*constants.image.logo*/"
+            v-if="false"
           >
             <div slot="error" class="image-slot">
               <i :class="!!'el-icon-picture-outline'"></i>
             </div>
           </el-image>
         </el-col>
-        <el-col :span="12">
-          <div class="userInfo">
+        <el-col :span="isNarrow ? 24 : 12">
+          <div
+            class="userInfo"
+            :style="{
+              textAlign: isNarrow ? 'center' : 'right',
+            }"
+          >
             <span style="margin-right: 12px">
               {{ $store.state.user.first_name }}
               {{ $store.state.user.last_name }}
@@ -29,10 +41,10 @@
         </el-col>
       </el-row>
     </el-header>
-    <el-container>
+    <el-container :direction="isNarrow ? 'vertical' : 'horizontal'">
       <el-aside
         v-if="!$route.path.startsWith('/login')"
-        width="230px"
+        :width="isNarrow ? 'auto' : '230px'"
         class="aside"
       >
         <el-menu
@@ -42,7 +54,7 @@
             height: '100%',
           }"
           :default-active="$route.path"
-          :default-openeds="['1', '2']"
+          :default-openeds="isNarrow ? [] : ['1', '2']"
           router
         >
           <el-submenu index="1">
@@ -74,7 +86,9 @@
           backgroundColor: '#f1f2f3',
           height: $route.path.startsWith('/login')
             ? '100vh'
-            : 'calc(100vh - 80px',
+            : isNarrow
+            ? 'auto'
+            : 'calc(100vh - 80px)',
         }"
         direction="vertical"
       >
@@ -119,6 +133,10 @@ export default {
     this.getProgramlist();
     this.getProductlist();
     this.getCompliancylist();
+    if (!this.$isServer) {
+      window.addEventListener("resize", this.onResize);
+      this.onResize();
+    }
   },
   updated() {
     if (
@@ -133,6 +151,11 @@ export default {
       }
     }
   },
+  destroyed() {
+    if (!this.$isServer) {
+      window.removeEventListener("resize", this.onResize);
+    }
+  },
   methods: {
     onLogoutClick() {
       this.logout(this.$store.state.user.userid);
@@ -143,7 +166,6 @@ export default {
 
 <style lang="stylus" scoped>
 .App
-  min-width 1024px
   overflow hidden
 
 .header
@@ -165,10 +187,12 @@ export default {
 .userInfo
   color #ffffff
   line-height 80px
-  text-align right
 
 >>> .el-date-editor
   max-width 100%
+
+>>> .el-input
+  width 100% !important
 </style>
 
 <style lang="stylus">
@@ -180,7 +204,7 @@ body
   color #333333
   height 100vh
   width 100vw
-  overflow hidden
+  overflow-x hidden
   letter-spacing 1px
 
 .image-bg

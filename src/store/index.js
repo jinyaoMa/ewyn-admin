@@ -24,14 +24,26 @@ export default new Vuex.Store(
   combine(
     {
       state: {
+        isNarrow: false,
         cid: 0
       },
+      getters: {
+        isNarrow(state) {
+          return state.isNarrow;
+        }
+      },
       mutations: {
+        setNarrow(state, flag) {
+          state.isNarrow = flag;
+        },
         setCID(state, id) {
           state.cid = id;
         }
       },
       actions: {
+        setNarrow(context, flag) {
+          context.commit("setNarrow", flag);
+        },
         setCID(context, id) {
           context.commit("setCID", id);
         }

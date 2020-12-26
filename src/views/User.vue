@@ -1,6 +1,11 @@
 <template>
   <div class="user">
-    <el-form :inline="false" :model="form" class="form" label-width="150px">
+    <el-form
+      :inline="false"
+      :model="form"
+      class="form"
+      :label-width="isNarrow ? '' : '110px'"
+    >
       <el-form-item label="Username">
         <el-input v-model="form.username" placeholder="Username"></el-input>
       </el-form-item>
@@ -10,7 +15,7 @@
       <el-form-item label="Last Name">
         <el-input v-model="form.lastname" placeholder="Last Name"></el-input>
       </el-form-item>
-      <el-form-item label="Admin Level">
+      <el-form-item label="Admin Level" :class="{ labelNoFloat: isNarrow }">
         <el-slider
           class="slider"
           v-model="form.adminLevel"
@@ -155,13 +160,13 @@ export default {
             firstname: c.first_name,
             lastname: c.last_name,
             telephone: c.telephone,
-            goalDate: moment(c.goal_date).add(1, 'd').format("YYYY-MM-DD"),
+            goalDate: moment(c.goal_date).add(1, "d").format("YYYY-MM-DD"),
             email: c.email,
             program: c.programid,
             reason: c.reason,
             product: c.productid,
             recommend: c.recommend,
-            startDate: moment(c.start_date).add(1, 'd').format("YYYY-MM-DD"),
+            startDate: moment(c.start_date).add(1, "d").format("YYYY-MM-DD"),
             startWeight: c.start_weight,
             goalWeight: c.goal_weight,
           };
@@ -320,7 +325,7 @@ export default {
           });
         })
         .catch(() => {});
-    }
+    },
   },
 };
 </script>
@@ -337,4 +342,8 @@ export default {
 .slider
   margin-left 10px
   margin-right 10px
+
+.labelNoFloat
+  >>> .el-form-item__label
+    float none
 </style>
