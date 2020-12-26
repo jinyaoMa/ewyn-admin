@@ -4,8 +4,8 @@ node_modules
 
 # ...
 数据库安装脚本.sql
-数据库和Node.js安装完成后，直接运行.sh
-运行安装Node.js.msi
+数据库和Node安装完成后直接运行.sh
+运行安装Node.msi
 
 # local env files
 #.env.local
