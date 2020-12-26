@@ -32,6 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SIGN));
 if (process.argv.length > 2 && process.argv[2] === "--prod") {
+  app.use(require('connect-history-api-fallback')());
   app.all("*", function(req, res, next) {
     res.header("Access-Control-Allow-Methods", "POST,GET");
     next();
