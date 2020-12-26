@@ -6,6 +6,7 @@ node_modules
 数据库安装脚本.sql
 数据库和Node安装完成后直接运行.sh
 运行安装Node.msi
+改地址和端口到文件.env.local
 
 # local env files
 #.env.local
