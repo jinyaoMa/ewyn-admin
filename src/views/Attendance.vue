@@ -201,7 +201,7 @@
       <el-table-column
         show-overflow-tooltip
         sortable
-        width="180px"
+        min-width="180px"
         prop="comment"
         label="Comments"
       ></el-table-column>

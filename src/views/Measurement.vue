@@ -203,7 +203,7 @@
       <el-table-column
         show-overflow-tooltip
         sortable
-        width="150px"
+        min-width="150px"
         prop="phc_initial"
         label="PHC Initial"
       ></el-table-column>
