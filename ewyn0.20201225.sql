@@ -38,7 +38,7 @@ CREATE TABLE `attendance` (
   KEY `compliancyid_idx` (`compliancyid`),
   CONSTRAINT `compliancyid` FOREIGN KEY (`compliancyid`) REFERENCES `compliancy` (`compliancyid`),
   CONSTRAINT `customerid` FOREIGN KEY (`customerid`) REFERENCES `customer` (`customerid`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -47,7 +47,7 @@ CREATE TABLE `attendance` (
 
 LOCK TABLES `attendance` WRITE;
 /*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
-INSERT INTO `attendance` VALUES (1,'2020-01-07',102,'Exercise3','abcdef...','2020-12-15',1,1),(3,'2019-12-12',123,'Exercise1','uvwxyz...','2019-12-31',2,1);
+INSERT INTO `attendance` VALUES (1,'2020-01-07',102,'Exercise3','abcdef...','2020-12-15',1,1),(3,'2019-12-12',123,'Exercise1','uvwxyz...','2019-12-31',2,1),(5,'2020-12-14',123,'','','2020-12-21',1,1),(6,'2020-12-21',113,'','','2020-12-21',1,1),(7,'2020-12-22',90,'','','2020-12-28',1,1);
 /*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,7 +62,7 @@ CREATE TABLE `compliancy` (
   `compliancyid` int(11) NOT NULL AUTO_INCREMENT,
   `compliancy_name` varchar(45) NOT NULL,
   PRIMARY KEY (`compliancyid`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -140,7 +140,7 @@ CREATE TABLE `measurement` (
   PRIMARY KEY (`measurementid`),
   KEY `customerid_idx` (`customerid`),
   CONSTRAINT `customerid_measurement` FOREIGN KEY (`customerid`) REFERENCES `customer` (`customerid`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -165,7 +165,7 @@ CREATE TABLE `product` (
   `product_name` varchar(45) NOT NULL,
   `optional` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,7 +174,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,'Product Option 1',0),(2,'Product Option 2',0),(3,'Product Option 3',0);
+INSERT INTO `product` VALUES (1,'Product Option 1',0),(2,'Product Option 2',0),(3,'Product Option 3',1);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -189,7 +189,7 @@ CREATE TABLE `program` (
   `programid` int(11) NOT NULL AUTO_INCREMENT,
   `program_name` varchar(45) NOT NULL,
   PRIMARY KEY (`programid`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -200,6 +200,39 @@ LOCK TABLES `program` WRITE;
 /*!40000 ALTER TABLE `program` DISABLE KEYS */;
 INSERT INTO `program` VALUES (1,'Phase 1'),(2,'Phase 1 + Protein'),(3,'Stabilization (1,2,3)'),(4,'Active'),(5,'Maintenance');
 /*!40000 ALTER TABLE `program` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `purchase`
+--
+
+DROP TABLE IF EXISTS `purchase`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `purchase` (
+  `purchaseid` int(11) NOT NULL AUTO_INCREMENT,
+  `customerid` int(11) NOT NULL,
+  `productid` int(11) NOT NULL,
+  `due_date` date NOT NULL,
+  `sold_date` date NOT NULL,
+  `initial` varchar(45) DEFAULT NULL,
+  `week` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`purchaseid`),
+  KEY `customerid_idx` (`customerid`),
+  KEY `productid_purchase_idx` (`productid`),
+  CONSTRAINT `customerid_purchase` FOREIGN KEY (`customerid`) REFERENCES `customer` (`customerid`),
+  CONSTRAINT `productid_purchase` FOREIGN KEY (`productid`) REFERENCES `product` (`productid`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `purchase`
+--
+
+LOCK TABLES `purchase` WRITE;
+/*!40000 ALTER TABLE `purchase` DISABLE KEYS */;
+INSERT INTO `purchase` VALUES (1,1,1,'2020-12-23','2020-12-23',NULL,1),(2,1,2,'2020-12-23','2020-12-23',NULL,1),(3,1,3,'2020-12-23','2020-12-23',NULL,1),(4,1,2,'2020-12-30','2020-12-30',NULL,2);
+/*!40000 ALTER TABLE `purchase` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -231,7 +264,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'admin','Ewyn','Studios','2020-12-17 20:03:14',NULL,1,'USER:1,ADMIN:-1','3awRGXRe1erxzpsJuAPo5g==','B1u1eWDDyXUVi3gC76fHZ89Ha71kEyObjLfFI8vy/ed+MvNki2uweDF7G5XzMjJHlulrVxXSfmMS0MjAQ3ghWb5W4xuhGGjyQboTAPlXOeTppX/2fASgVL7AoxjL8ChR'),(2,'admin_0','Mark','Ma','2020-12-18 00:41:32',NULL,1,'USER:1,ADMIN:0','3awRGXRe1erxzpsJuAPo5g==',''),(3,'jason','Jason','Wang','2020-12-21 16:08:41',NULL,0,'USER:1,ADMIN:0','3awRGXRe1erxzpsJuAPo5g==','');
+INSERT INTO `user` VALUES (1,'admin','Ewyn','Studios','2020-12-17 20:03:14',NULL,1,'USER:1,ADMIN:-1','3awRGXRe1erxzpsJuAPo5g==','bQMhiqY8nqLrOJ6/pMzTHgmVCq9OdVqBh6SqXUTzCU0TYU6rLHKLzMR/nnRsBBtHC58YHb6q8gHaxj1YrbcVsycpoW9NLny8uPOH/jV7GJMUl+ZjV0axGfYBxLJJkbMx'),(2,'admin_0','Mark','Ma','2020-12-18 00:41:32',NULL,1,'USER:1,ADMIN:0','3awRGXRe1erxzpsJuAPo5g==',''),(3,'jason','Jason','Wang','2020-12-21 16:08:41',NULL,0,'USER:1,ADMIN:0','3awRGXRe1erxzpsJuAPo5g==','');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -252,4 +285,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-21 16:59:08
+-- Dump completed on 2020-12-26 15:29:45
