@@ -3,7 +3,7 @@ const crypto = require("crypto");
 module.exports = (express, db) => {
   var router = express.Router();
 
-  router.post("/setPassword", function(req, res, next) {
+  router.post("/setPassword", function (req, res, next) {
     const algorithm = "aes-256-cbc";
     const clearEncoding = "utf8";
     const cipherEncoding = "base64";
@@ -58,7 +58,7 @@ module.exports = (express, db) => {
             cipherChunks.push(cipher.final(cipherEncoding));
             const encryptedPassword = cipherChunks.join("");
 
-            db.query(
+            db().query(
               `UPDATE user SET password = ? WHERE userid = ? AND access_token = ? AND password = ?`,
               [
                 encryptedPassword,
@@ -104,7 +104,7 @@ module.exports = (express, db) => {
     }
   });
 
-  router.get("/resetPassword/:id", function(req, res, next) {
+  router.get("/resetPassword/:id", function (req, res, next) {
     const algorithm = "aes-256-cbc";
     const clearEncoding = "utf8";
     const cipherEncoding = "base64";
@@ -126,7 +126,7 @@ module.exports = (express, db) => {
         cipherChunks.push(cipher.final(cipherEncoding));
         const encryptedPassword = cipherChunks.join("");
 
-        db.query(
+        db().query(
           `UPDATE user SET password = ? WHERE userid = ?`,
           [encryptedPassword, parseInt(req.params.id)],
           (err, result) => {
@@ -138,7 +138,7 @@ module.exports = (express, db) => {
               console.log(err);
             } else {
               const sql = `SELECT userid, name, first_name, last_name, startdate, permission FROM user WHERE actived = 1 ORDER BY startdate DESC`;
-              db.query(sql, (err1, result1) => {
+              db().query(sql, (err1, result1) => {
                 if (err1) {
                   res.json({
                     code: 204,
@@ -168,7 +168,7 @@ module.exports = (express, db) => {
     }
   });
 
-  router.get("/deactivate/:id", function(req, res, next) {
+  router.get("/deactivate/:id", function (req, res, next) {
     if (
       typeof req.permission === "string" &&
       req.permission.includes("ADMIN:-1")
@@ -177,7 +177,7 @@ module.exports = (express, db) => {
         const sql = `UPDATE user SET actived = 0 WHERE userid = ${parseInt(
           req.params.id
         )}`;
-        db.query(sql, (err, result) => {
+        db().query(sql, (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -186,7 +186,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT userid, name, first_name, last_name, startdate, permission FROM user WHERE actived = 1 ORDER BY startdate DESC`;
-            db.query(sql, (err1, result1) => {
+            db().query(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -214,7 +214,7 @@ module.exports = (express, db) => {
     }
   });
 
-  router.post("/edit", function(req, res, next) {
+  router.post("/edit", function (req, res, next) {
     if (
       typeof req.permission === "string" &&
       req.permission.includes("ADMIN:-1")
@@ -238,7 +238,7 @@ module.exports = (express, db) => {
           `USER:1,ADMIN:${adminLevel}`,
           parseInt(userid)
         ];
-        db.query(sql, values, (err, result) => {
+        db().query(sql, values, (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -247,7 +247,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT userid, name, first_name, last_name, startdate, permission FROM user WHERE actived = 1 ORDER BY startdate DESC`;
-            db.query(sql, (err1, result1) => {
+            db().query(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -275,7 +275,7 @@ module.exports = (express, db) => {
     }
   });
 
-  router.post("/add", function(req, res, next) {
+  router.post("/add", function (req, res, next) {
     if (
       typeof req.permission === "string" &&
       req.permission.includes("ADMIN:-1")
@@ -292,7 +292,7 @@ module.exports = (express, db) => {
         const values = [
           [firstname, lastname, username, `USER:1,ADMIN:${adminLevel}`]
         ];
-        db.query(sql, [values], (err, result) => {
+        db().query(sql, [values], (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -301,7 +301,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT userid, name, first_name, last_name, startdate, permission FROM user WHERE actived = 1 ORDER BY startdate DESC`;
-            db.query(sql, (err1, result1) => {
+            db().query(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -329,13 +329,13 @@ module.exports = (express, db) => {
     }
   });
 
-  router.get("/all", function(req, res, next) {
+  router.get("/all", function (req, res, next) {
     if (
       typeof req.permission === "string" &&
       req.permission.includes("ADMIN:-1")
     ) {
       const sql = `SELECT userid, name, first_name, last_name, startdate, permission FROM user WHERE actived = 1 ORDER BY startdate DESC`;
-      db.query(sql, (err, result) => {
+      db().query(sql, (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -357,10 +357,10 @@ module.exports = (express, db) => {
     }
   });
 
-  router.get("/logout/:id", function(req, res, next) {
+  router.get("/logout/:id", function (req, res, next) {
     try {
       const sql = `UPDATE user SET access_token = '' WHERE userid = ? AND access_token = ?`;
-      db.query(
+      db().query(
         sql,
         [parseInt(req.params.id), req.signedCookies.access_token],
         (err, result) => {
@@ -388,13 +388,13 @@ module.exports = (express, db) => {
     }
   });
 
-  router.get("/auth/:id", function(req, res, next) {
+  router.get("/auth/:id", function (req, res, next) {
     if (typeof req.signedCookies.access_token === "string") {
       try {
         const sql = `SELECT * FROM user WHERE actived = 1 AND userid = ${parseInt(
           req.params.id
         )} ORDER BY startdate DESC`;
-        db.query(sql, (err, result) => {
+        db().query(sql, (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -434,7 +434,7 @@ module.exports = (express, db) => {
     }
   });
 
-  router.post("/login", function(req, res, next) {
+  router.post("/login", function (req, res, next) {
     const algorithm = "aes-256-cbc";
     const clearEncoding = "utf8";
     const cipherEncoding = "base64";
@@ -471,7 +471,7 @@ module.exports = (express, db) => {
           const encryptedPassword = cipherChunks.join("");
 
           const sql = `SELECT * FROM user WHERE name = ? AND actived = 1 ORDER BY startdate DESC`;
-          db.query(sql, [username], (err, result) => {
+          db().query(sql, [username], (err, result) => {
             if (err) {
               res.json({
                 code: 204,
@@ -488,7 +488,7 @@ module.exports = (express, db) => {
                 .randomBytes(128)
                 .toString("base64")
                 .substr(0, 128);
-              db.query(
+              db().query(
                 `UPDATE user SET access_token = ? WHERE userid = ?`,
                 [access_token, result[0].userid],
                 (err, _) => {

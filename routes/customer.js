@@ -3,9 +3,9 @@ const moment = require("moment");
 module.exports = (express, db) => {
   var router = express.Router();
 
-  router.get("/all", function(req, res, next) {
+  router.get("/all", function (req, res, next) {
     const sql = `SELECT * FROM customer WHERE actived = 1`;
-    db.query(sql, (err, result) => {
+    db().query(sql, (err, result) => {
       if (err) {
         res.json({
           code: 204,
@@ -21,12 +21,12 @@ module.exports = (express, db) => {
     });
   });
 
-  router.get("/id/:id", function(req, res, next) {
+  router.get("/id/:id", function (req, res, next) {
     try {
       const sql = `SELECT * FROM customer WHERE actived = 1 AND customerid = ${parseInt(
         req.params.id
       )}`;
-      db.query(sql, (err, result) => {
+      db().query(sql, (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -45,9 +45,9 @@ module.exports = (express, db) => {
     }
   });
 
-  router.get("/phone", function(req, res, next) {
+  router.get("/phone", function (req, res, next) {
     const sql = `SELECT customerid, CONCAT(first_name, ' ', last_name) as name, telephone FROM customer WHERE actived = 1`;
-    db.query(sql, (err, result) => {
+    db().query(sql, (err, result) => {
       if (err) {
         res.json({
           code: 204,
@@ -63,7 +63,7 @@ module.exports = (express, db) => {
     });
   });
 
-  router.post("/search", function(req, res, next) {
+  router.post("/search", function (req, res, next) {
     console.log(req.body);
     try {
       const firstname = req.body.firstname;
@@ -78,7 +78,7 @@ module.exports = (express, db) => {
         `%${telephone}%`,
         `%${email}%`
       ];
-      db.query(sql, values, (err, result) => {
+      db().query(sql, values, (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -97,7 +97,7 @@ module.exports = (express, db) => {
     }
   });
 
-  router.post("/add", function(req, res, next) {
+  router.post("/add", function (req, res, next) {
     console.log(req.body);
     try {
       const firstname = req.body.firstname;
@@ -131,7 +131,7 @@ module.exports = (express, db) => {
           parseInt(recommend)
         ]
       ];
-      db.query(sql, [values], (err, result) => {
+      db().query(sql, [values], (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -140,7 +140,7 @@ module.exports = (express, db) => {
           console.log(err);
         } else {
           const sql = `SELECT * FROM customer WHERE actived = 1`;
-          db.query(sql, (err1, result1) => {
+          db().query(sql, (err1, result1) => {
             if (err1) {
               res.json({
                 code: 204,
@@ -162,7 +162,7 @@ module.exports = (express, db) => {
     }
   });
 
-  router.post("/edit", function(req, res, next) {
+  router.post("/edit", function (req, res, next) {
     console.log(req.body);
     try {
       const firstname = req.body.firstname;
@@ -206,7 +206,7 @@ module.exports = (express, db) => {
         parseInt(recommend),
         parseInt(customerid)
       ];
-      db.query(sql, values, (err, result) => {
+      db().query(sql, values, (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -215,7 +215,7 @@ module.exports = (express, db) => {
           console.log(err);
         } else {
           const sql = `SELECT * FROM customer WHERE actived = 1`;
-          db.query(sql, (err1, result1) => {
+          db().query(sql, (err1, result1) => {
             if (err1) {
               res.json({
                 code: 204,
@@ -237,12 +237,12 @@ module.exports = (express, db) => {
     }
   });
 
-  router.get("/deactivate/:id", function(req, res, next) {
+  router.get("/deactivate/:id", function (req, res, next) {
     try {
       const sql = `UPDATE customer SET actived = 0 WHERE customerid = ${parseInt(
         req.params.id
       )}`;
-      db.query(sql, (err, result) => {
+      db().query(sql, (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -251,7 +251,7 @@ module.exports = (express, db) => {
           console.log(err);
         } else {
           const sql = `SELECT * FROM customer WHERE actived = 1`;
-          db.query(sql, (err1, result1) => {
+          db().query(sql, (err1, result1) => {
             if (err1) {
               res.json({
                 code: 204,

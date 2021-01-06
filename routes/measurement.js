@@ -3,9 +3,9 @@ const moment = require("moment");
 module.exports = (express, db) => {
   var router = express.Router();
 
-  router.get("/all", function(req, res, next) {
+  router.get("/all", function (req, res, next) {
     const sql = `SELECT * FROM measurement m INNER JOIN customer c ON c.customerid = m.customerid WHERE c.actived = 1`;
-    db.query(sql, (err, result) => {
+    db().query(sql, (err, result) => {
       if (err) {
         res.json({
           code: 204,
@@ -21,11 +21,11 @@ module.exports = (express, db) => {
     });
   });
 
-  router.get("/customer/:id", function(req, res, next) {
+  router.get("/customer/:id", function (req, res, next) {
     const sql = `SELECT * FROM measurement m INNER JOIN customer c ON c.customerid = m.customerid WHERE c.actived = 1 AND m.customerid = ${parseInt(
       req.params.id
     )} ORDER BY date DESC`;
-    db.query(sql, (err, result) => {
+    db().query(sql, (err, result) => {
       if (err) {
         res.json({
           code: 204,
@@ -41,7 +41,7 @@ module.exports = (express, db) => {
     });
   });
 
-  router.post("/add", function(req, res, next) {
+  router.post("/add", function (req, res, next) {
     console.log(req.body);
     try {
       const date = req.body.date;
@@ -71,7 +71,7 @@ module.exports = (express, db) => {
           parseInt(customerid)
         ]
       ];
-      db.query(sql, [values], (err, result) => {
+      db().query(sql, [values], (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -82,7 +82,7 @@ module.exports = (express, db) => {
           const sql = `SELECT * FROM measurement m INNER JOIN customer c ON c.customerid = m.customerid WHERE c.actived = 1 AND m.customerid = ${parseInt(
             customerid
           )} ORDER BY date DESC`;
-          db.query(sql, (err1, result1) => {
+          db().query(sql, (err1, result1) => {
             if (err1) {
               res.json({
                 code: 204,
@@ -104,7 +104,7 @@ module.exports = (express, db) => {
     }
   });
 
-  router.post("/edit", function(req, res, next) {
+  router.post("/edit", function (req, res, next) {
     console.log(req.body);
     try {
       const date = req.body.date;
@@ -141,7 +141,7 @@ module.exports = (express, db) => {
         parseInt(customerid),
         parseInt(measurementid)
       ];
-      db.query(sql, values, (err, result) => {
+      db().query(sql, values, (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -152,7 +152,7 @@ module.exports = (express, db) => {
           const sql = `SELECT * FROM measurement m INNER JOIN customer c ON c.customerid = m.customerid WHERE c.actived = 1 AND m.customerid = ${parseInt(
             customerid
           )} ORDER BY date DESC`;
-          db.query(sql, (err1, result1) => {
+          db().query(sql, (err1, result1) => {
             if (err1) {
               res.json({
                 code: 204,
@@ -174,14 +174,14 @@ module.exports = (express, db) => {
     }
   });
 
-  router.post("/delete/:id", function(req, res, next) {
+  router.post("/delete/:id", function (req, res, next) {
     console.log(req.body);
     try {
       const customerid = req.body.customerid;
       const sql = `DELETE FROM measurement WHERE measurementid = ${parseInt(
         req.params.id
       )}`;
-      db.query(sql, (err, result) => {
+      db().query(sql, (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -192,7 +192,7 @@ module.exports = (express, db) => {
           const sql = `SELECT * FROM measurement m INNER JOIN customer c ON c.customerid = m.customerid WHERE c.actived = 1 AND m.customerid = ${parseInt(
             customerid
           )} ORDER BY date DESC`;
-          db.query(sql, (err1, result1) => {
+          db().query(sql, (err1, result1) => {
             if (err1) {
               res.json({
                 code: 204,

@@ -12,18 +12,34 @@ dotenv.config({
 });
 
 var mysql = require("mysql");
-var connection = mysql.createConnection({
+const dbConfig = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE
-});
+};
 
-connection.connect((err) => {
-  if (err) throw err;
-  console.log("mysql connncted success!");
-});
+function handleDisconnection() {
+  var connection = mysql.createConnection(dbConfig);
+  connection.connect(function (err) {
+    if (err) {
+      setTimeout("handleDisconnection()", 2000);
+    }
+    console.log("mysql connncted success!");
+  });
+  connection.on("error", function (err) {
+    logger.error("db error", err);
+    if (err.code === "PROTOCOL_CONNECTION_LOST") {
+      logger.error("db error reconnecting:" + err.message);
+      handleDisconnection();
+    } else {
+      throw err;
+    }
+  });
+  return connection;
+}
+var connection = handleDisconnection();
 
 var app = express();
 
@@ -32,8 +48,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SIGN));
 if (process.argv.length > 2 && process.argv[2] === "--prod") {
-  app.use(require('connect-history-api-fallback')());
-  app.all("*", function(req, res, next) {
+  app.use(require("connect-history-api-fallback")());
+  app.all("*", function (req, res, next) {
     res.header("Access-Control-Allow-Methods", "POST,GET");
     next();
   });
@@ -85,7 +101,7 @@ function autoLoadFile(directory, useSubdirectories = false, extList = [".js"]) {
 }
 
 // Auth
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   if (req.url.startsWith("/api/user/login")) {
     next();
   } else {
@@ -134,7 +150,9 @@ files.forEach((file) => {
   if (file.path.endsWith("index.js")) return;
   app.use(
     "/api/" + file.base.replace(/(\.\/|\.js)/g, ""),
-    file.data(express, connection)
+    file.data(express, () => {
+      return connection;
+    })
   );
 });
 

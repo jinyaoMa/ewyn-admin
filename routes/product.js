@@ -1,7 +1,7 @@
 module.exports = (express, db) => {
   var router = express.Router();
 
-  router.get("/delete/:id", function(req, res, next) {
+  router.get("/delete/:id", function (req, res, next) {
     if (
       typeof req.permission === "string" &&
       req.permission.includes("ADMIN:-1")
@@ -10,7 +10,7 @@ module.exports = (express, db) => {
         const sql = `DELETE FROM product WHERE productid = ${parseInt(
           req.params.id
         )}`;
-        db.query(sql, (err, result) => {
+        db().query(sql, (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -19,7 +19,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT * FROM product`;
-            db.query(sql, (err1, result1) => {
+            db().query(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -47,7 +47,7 @@ module.exports = (express, db) => {
     }
   });
 
-  router.post("/edit", function(req, res, next) {
+  router.post("/edit", function (req, res, next) {
     if (
       typeof req.permission === "string" &&
       req.permission.includes("ADMIN:-1")
@@ -58,7 +58,7 @@ module.exports = (express, db) => {
         const productid = req.body.productid;
         const sql = `UPDATE product SET product_name = ?, optional = ? WHERE productid = ?`;
         const values = [product_name, parseInt(optional), parseInt(productid)];
-        db.query(sql, values, (err, result) => {
+        db().query(sql, values, (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -67,7 +67,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT * FROM product`;
-            db.query(sql, (err1, result1) => {
+            db().query(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -95,7 +95,7 @@ module.exports = (express, db) => {
     }
   });
 
-  router.post("/add", function(req, res, next) {
+  router.post("/add", function (req, res, next) {
     if (
       typeof req.permission === "string" &&
       req.permission.includes("ADMIN:-1")
@@ -105,7 +105,7 @@ module.exports = (express, db) => {
         const option = req.body.option;
         const sql = `INSERT INTO product (product_name, optional) VALUES ?`;
         const values = [[name, parseInt(option)]];
-        db.query(sql, [values], (err, result) => {
+        db().query(sql, [values], (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -114,7 +114,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT * FROM product`;
-            db.query(sql, (err1, result1) => {
+            db().query(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -142,9 +142,9 @@ module.exports = (express, db) => {
     }
   });
 
-  router.get("/all", function(req, res, next) {
+  router.get("/all", function (req, res, next) {
     const sql = `SELECT * FROM product`;
-    db.query(sql, (err, result) => {
+    db().query(sql, (err, result) => {
       if (err) {
         res.json({
           code: 204,
