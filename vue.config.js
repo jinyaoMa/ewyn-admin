@@ -7,7 +7,7 @@ module.exports = {
       entry: "src/main.js",
       template: "public/index.html",
       filename: "index.html",
-      title: "Ewyn Studios"
+      title: "Hyperxsoft"
     }
   },
   transpileDependencies: ["vue-echarts", "resize-detector"]

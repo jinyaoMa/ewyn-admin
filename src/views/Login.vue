@@ -2,7 +2,12 @@
   <el-container class="login">
     <el-main>
       <div class="frame">
-        <el-form :inline="false" :model="form" class="form">
+        <el-form
+          :inline="false"
+          :model="form"
+          class="form"
+          @submit.native.prevent
+        >
           <el-form-item label="Username">
             <el-input type="text" v-model="form.username" clearable></el-input>
           </el-form-item>
@@ -15,7 +20,11 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button style="float: right" type="primary" @click="onSubmit"
+            <el-button
+              style="float: right"
+              type="primary"
+              native-type="submit"
+              @click="onSubmit"
               >Login</el-button
             >
           </el-form-item>
@@ -86,7 +95,7 @@ export default {
 .frame
   box-sizing border-box
   width 320px
-  margin calc( 50vmin - 200px ) auto 0
+  margin calc(50vmin - 200px) auto 0
   height fit-content
   padding 20px
   background-color #ffffff

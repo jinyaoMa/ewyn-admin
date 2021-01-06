@@ -24,9 +24,10 @@ function handleDisconnection() {
   var connection = mysql.createConnection(dbConfig);
   connection.connect(function (err) {
     if (err) {
-      setTimeout("handleDisconnection()", 2000);
+      setTimeout(handleDisconnection, 2000);
+    } else {
+      console.log("mysql connncted success!");
     }
-    console.log("mysql connncted success!");
   });
   connection.on("error", function (err) {
     logger.error("db error", err);
