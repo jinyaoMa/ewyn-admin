@@ -10,7 +10,7 @@ module.exports = (express, db) => {
         const sql = `DELETE FROM compliancy WHERE compliancyid = ${parseInt(
           req.params.id
         )}`;
-        db().query(sql, (err, result) => {
+        db(sql, (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -19,7 +19,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT * FROM compliancy`;
-            db().query(sql, (err1, result1) => {
+            db(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -57,7 +57,7 @@ module.exports = (express, db) => {
         const compliancyid = req.body.compliancyid;
         const sql = `UPDATE compliancy SET compliancy_name = ? WHERE compliancyid = ?`;
         const values = [compliancy_name, parseInt(compliancyid)];
-        db().query(sql, values, (err, result) => {
+        db(sql, values, (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -66,7 +66,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT * FROM compliancy`;
-            db().query(sql, (err1, result1) => {
+            db(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -103,7 +103,7 @@ module.exports = (express, db) => {
         const compliancy = req.body.compliancy;
         const sql = `INSERT INTO compliancy (compliancy_name) VALUES ?`;
         const values = [[compliancy]];
-        db().query(sql, [values], (err, result) => {
+        db(sql, [values], (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -112,7 +112,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT * FROM compliancy`;
-            db().query(sql, (err1, result1) => {
+            db(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -142,7 +142,7 @@ module.exports = (express, db) => {
 
   router.get("/all", function (req, res, next) {
     const sql = `SELECT * FROM compliancy`;
-    db().query(sql, (err, result) => {
+    db(sql, (err, result) => {
       if (err) {
         res.json({
           code: 204,

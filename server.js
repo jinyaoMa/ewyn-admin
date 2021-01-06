@@ -20,27 +20,38 @@ const dbConfig = {
   database: process.env.DB_DATABASE
 };
 
-function handleDisconnection() {
-  var connection = mysql.createConnection(dbConfig);
-  connection.connect(function (err) {
+var connPool = mysql.createPool(dbConfig);
+connPool.getConnection(function (err, conn) {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("mysql connncted success!");
+    conn.release();
+  }
+});
+var query = function (sql, options, callback) {
+  connPool.getConnection(function (err, conn) {
     if (err) {
-      setTimeout(handleDisconnection, 2000);
+      if (typeof options === "function") {
+        options(err, null, null);
+      } else if (typeof callback === "function") {
+        callback(err, null, null);
+      }
+      console.log(err);
     } else {
-      console.log("mysql connncted success!");
+      if (typeof options === "function") {
+        conn.query(sql, function (err, results, fields) {
+          options(err, results, fields);
+        });
+      } else if (typeof callback === "function") {
+        conn.query(sql, options, function (err, results, fields) {
+          callback(err, results, fields);
+        });
+      }
+      conn.release();
     }
   });
-  connection.on("error", function (err) {
-    logger.error("db error", err);
-    if (err.code === "PROTOCOL_CONNECTION_LOST") {
-      logger.error("db error reconnecting:" + err.message);
-      handleDisconnection();
-    } else {
-      throw err;
-    }
-  });
-  return connection;
-}
-var connection = handleDisconnection();
+};
 
 var app = express();
 
@@ -112,7 +123,7 @@ app.use(function (req, res, next) {
     ) {
       try {
         const sql = `SELECT * FROM user WHERE actived = 1 AND userid = ? AND access_token = ?`;
-        connection.query(
+        query(
           sql,
           [parseInt(req.signedCookies.userid), req.signedCookies.access_token],
           (err, result) => {
@@ -151,9 +162,7 @@ files.forEach((file) => {
   if (file.path.endsWith("index.js")) return;
   app.use(
     "/api/" + file.base.replace(/(\.\/|\.js)/g, ""),
-    file.data(express, () => {
-      return connection;
-    })
+    file.data(express, query)
   );
 });
 

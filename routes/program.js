@@ -10,7 +10,7 @@ module.exports = (express, db) => {
         const sql = `DELETE FROM program WHERE programid = ${parseInt(
           req.params.id
         )}`;
-        db().query(sql, (err, result) => {
+        db(sql, (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -19,7 +19,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT * FROM program`;
-            db().query(sql, (err1, result1) => {
+            db(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -57,7 +57,7 @@ module.exports = (express, db) => {
         const programid = req.body.programid;
         const sql = `UPDATE program SET program_name = ? WHERE programid = ?`;
         const values = [program_name, parseInt(programid)];
-        db().query(sql, values, (err, result) => {
+        db(sql, values, (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -66,7 +66,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT * FROM program`;
-            db().query(sql, (err1, result1) => {
+            db(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -103,7 +103,7 @@ module.exports = (express, db) => {
         const program = req.body.program;
         const sql = `INSERT INTO program (program_name) VALUES ?`;
         const values = [[program]];
-        db().query(sql, [values], (err, result) => {
+        db(sql, [values], (err, result) => {
           if (err) {
             res.json({
               code: 204,
@@ -112,7 +112,7 @@ module.exports = (express, db) => {
             console.log(err);
           } else {
             const sql = `SELECT * FROM program`;
-            db().query(sql, (err1, result1) => {
+            db(sql, (err1, result1) => {
               if (err1) {
                 res.json({
                   code: 204,
@@ -142,7 +142,7 @@ module.exports = (express, db) => {
 
   router.get("/all", function (req, res, next) {
     const sql = `SELECT * FROM program`;
-    db().query(sql, (err, result) => {
+    db(sql, (err, result) => {
       if (err) {
         res.json({
           code: 204,

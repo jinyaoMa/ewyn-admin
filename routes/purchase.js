@@ -5,7 +5,7 @@ module.exports = (express, db) => {
 
   router.get("/all", function (req, res, next) {
     const sql = `SELECT * FROM purchase a INNER JOIN customer c ON c.customerid = a.customerid WHERE c.actived = 1`;
-    db().query(sql, (err, result) => {
+    db(sql, (err, result) => {
       if (err) {
         res.json({
           code: 204,
@@ -28,7 +28,7 @@ module.exports = (express, db) => {
     WHERE c.actived = 1 AND a.customerid = ${parseInt(
       req.params.id
     )} ORDER BY week, due_date ASC`;
-    db().query(sql, (err, result) => {
+    db(sql, (err, result) => {
       if (err) {
         res.json({
           code: 204,
@@ -64,7 +64,7 @@ module.exports = (express, db) => {
           parseInt(customerid)
         ]
       ];
-      db().query(sql, [values], (err, result) => {
+      db(sql, [values], (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -78,7 +78,7 @@ module.exports = (express, db) => {
           WHERE c.actived = 1 AND a.customerid = ${parseInt(
             customerid
           )} ORDER BY week, due_date ASC`;
-          db().query(sql, (err1, result1) => {
+          db(sql, (err1, result1) => {
             if (err1) {
               res.json({
                 code: 204,
@@ -122,7 +122,7 @@ module.exports = (express, db) => {
         parseInt(customerid),
         parseInt(purchaseid)
       ];
-      db().query(sql, values, (err, result) => {
+      db(sql, values, (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -136,7 +136,7 @@ module.exports = (express, db) => {
           WHERE c.actived = 1 AND a.customerid = ${parseInt(
             customerid
           )} ORDER BY week, due_date ASC`;
-          db().query(sql, (err1, result1) => {
+          db(sql, (err1, result1) => {
             if (err1) {
               res.json({
                 code: 204,
@@ -165,7 +165,7 @@ module.exports = (express, db) => {
       const sql = `DELETE FROM purchase WHERE purchaseid = ${parseInt(
         req.params.id
       )}`;
-      db().query(sql, (err, result) => {
+      db(sql, (err, result) => {
         if (err) {
           res.json({
             code: 204,
@@ -179,7 +179,7 @@ module.exports = (express, db) => {
           WHERE c.actived = 1 AND a.customerid = ${parseInt(
             customerid
           )} ORDER BY week, due_date ASC`;
-          db().query(sql, (err1, result1) => {
+          db(sql, (err1, result1) => {
             if (err1) {
               res.json({
                 code: 204,
