@@ -88,6 +88,7 @@
     <el-form
       :inline="false"
       :model="form"
+      ref="form"
       class="form"
       :label-width="isNarrow ? '' : '90px'"
     >
@@ -259,6 +260,9 @@ export default {
     };
   },
   mounted() {
+    this.getProgramlist();
+    this.getProductlist();
+    this.getCompliancylist();
     if (parseInt(this.$store.state.cid)) {
       this.getCustomerById(this.$store.state.cid, (result) => {
         if (result.data && result.data.length === 1) {
@@ -269,7 +273,6 @@ export default {
         }
       });
     }
-    console.log(this);
   },
   computed: {
     weeklyPurchaselist() {
@@ -374,38 +377,46 @@ export default {
         .catch(() => {});
     },
     onSubmit() {
-      this.addPurcahse(
-        {
-          ...this.form,
-          customerid: this.form.customer,
-        },
-        (result) => {
-          if (result.data.data) {
-            this.$message({
-              message: "Record added!",
-              type: "success",
-            });
-          }
+      this.$refs.form.validate((flag) => {
+        if (flag) {
+          this.addPurcahse(
+            {
+              ...this.form,
+              customerid: this.form.customer,
+            },
+            (result) => {
+              if (result.data.data) {
+                this.$message({
+                  message: "Record added!",
+                  type: "success",
+                });
+              }
+            }
+          );
         }
-      );
+      });
     },
     onConfirm() {
-      this.editPurcahse(
-        {
-          ...this.form,
-          customerid: this.form.customer,
-          purchaseid: this.editId,
-        },
-        (result) => {
-          if (result.data.affectedRows === 1) {
-            this.$message({
-              message: "Updated!",
-              type: "success",
-            });
-            this.onCancel();
-          }
+      this.$refs.form.validate((flag) => {
+        if (flag) {
+          this.editPurcahse(
+            {
+              ...this.form,
+              customerid: this.form.customer,
+              purchaseid: this.editId,
+            },
+            (result) => {
+              if (result.data.affectedRows === 1) {
+                this.$message({
+                  message: "Updated!",
+                  type: "success",
+                });
+                this.onCancel();
+              }
+            }
+          );
         }
-      );
+      });
     },
     onCancel() {
       const c = this.form.customer;
@@ -419,6 +430,7 @@ export default {
       this.getPurchaseById(c);
       this.isEdit = false;
       this.editId = 0;
+      this.$refs.form.resetFields();
     },
   },
 };

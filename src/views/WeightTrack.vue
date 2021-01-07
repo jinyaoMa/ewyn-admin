@@ -88,6 +88,7 @@
     <el-form
       :inline="false"
       :model="form"
+      ref="form"
       class="form"
       :label-width="isNarrow ? '' : '100px'"
     >
@@ -112,9 +113,6 @@
       <el-form-item>
         <el-button v-if="form.customer" type="primary" @click="onSubmit"
           >Track</el-button
-        >
-        <el-button v-if="form.customer" type="info" @click="onCancel"
-          >Clear Form</el-button
         >
       </el-form-item>
     </el-form>

@@ -88,6 +88,7 @@
     <el-form
       :inline="false"
       :model="form"
+      ref="form"
       class="form"
       :label-width="isNarrow ? '' : '160px'"
     >
@@ -116,7 +117,7 @@
           placeholder="Pick a date"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item required prop="email" label="Email">
+      <el-form-item prop="email" label="Email">
         <el-input
           v-model="form.email"
           placeholder="Email"
@@ -133,7 +134,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item required prop="reason" label="Reason for Joining">
+      <el-form-item prop="reason" label="Reason for Joining">
         <el-input
           type="textarea"
           v-model="form.reason"
@@ -370,6 +371,11 @@ export default {
       editId: 0,
     };
   },
+  mounted() {
+    this.getProgramlist();
+    this.getProductlist();
+    this.getCompliancylist();
+  },
   methods: {
     handleDialogInnerSelect() {
       const c = this.dialogFormInnerSelect;
@@ -436,11 +442,15 @@ export default {
       }
     },
     onSubmit() {
-      this.addCustomer(this.form, (result) => {
-        if (result.data.data) {
-          this.$message({
-            message: "Create successfully!",
-            type: "success",
+      this.$refs.form.validate((flag) => {
+        if (flag) {
+          this.addCustomer(this.form, (result) => {
+            if (result.data.data) {
+              this.$message({
+                message: "Create successfully!",
+                type: "success",
+              });
+            }
           });
         }
       });
@@ -465,21 +475,25 @@ export default {
       };
     },
     onConfirm() {
-      this.editCustomer(
-        {
-          ...this.form,
-          customerid: this.customerId,
-        },
-        (result) => {
-          if (result.data.affectedRows === 1) {
-            this.$message({
-              message: "Updated!",
-              type: "success",
-            });
-            this.onCancel();
-          }
+      this.$refs.form.validate((flag) => {
+        if (flag) {
+          this.editCustomer(
+            {
+              ...this.form,
+              customerid: this.customerId,
+            },
+            (result) => {
+              if (result.data.affectedRows === 1) {
+                this.$message({
+                  message: "Updated!",
+                  type: "success",
+                });
+                this.onCancel();
+              }
+            }
+          );
         }
-      );
+      });
     },
     onCancel() {
       this.dialogFormInnerTable = [];
@@ -501,6 +515,7 @@ export default {
         startWeight: 0.0,
         goalWeight: 0.0,
       };
+      this.$refs.form.resetFields();
     },
     onInactivate() {
       this.$confirm(

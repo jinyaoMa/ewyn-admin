@@ -3,19 +3,25 @@
     <el-form
       :inline="false"
       :model="form"
+      ref="form"
       class="form"
-      :label-width="isNarrow ? '' : '110px'"
+      :label-width="isNarrow ? '' : '120px'"
     >
-      <el-form-item label="Username">
+      <el-form-item required prop="username" label="Username">
         <el-input v-model="form.username" placeholder="Username"></el-input>
       </el-form-item>
-      <el-form-item label="First Name">
+      <el-form-item required prop="firstname" label="First Name">
         <el-input v-model="form.firstname" placeholder="First Name"></el-input>
       </el-form-item>
-      <el-form-item label="Last Name">
+      <el-form-item required prop="lastname" label="Last Name">
         <el-input v-model="form.lastname" placeholder="Last Name"></el-input>
       </el-form-item>
-      <el-form-item label="Admin Level" :class="{ labelNoFloat: isNarrow }">
+      <el-form-item
+        required
+        prop="adminLevel"
+        label="Admin Level"
+        :class="{ labelNoFloat: isNarrow }"
+      >
         <el-slider
           class="slider"
           v-model="form.adminLevel"
@@ -206,11 +212,15 @@ export default {
       }
     },
     onSubmit() {
-      this.addUser(this.form, (result) => {
-        if (result.data.data) {
-          this.$message({
-            message: "Create successfully!",
-            type: "success",
+      this.$refs.form.validate((flag) => {
+        if (flag) {
+          this.addUser(this.form, (result) => {
+            if (result.data.data) {
+              this.$message({
+                message: "Create successfully!",
+                type: "success",
+              });
+            }
           });
         }
       });
@@ -232,21 +242,25 @@ export default {
       };
     },
     onConfirm() {
-      this.editUser(
-        {
-          ...this.form,
-          userid: this.editId,
-        },
-        (result) => {
-          if (result.data.affectedRows === 1) {
-            this.$message({
-              message: "Updated!",
-              type: "success",
-            });
-            this.onCancel();
-          }
+      this.$refs.form.validate((flag) => {
+        if (flag) {
+          this.editUser(
+            {
+              ...this.form,
+              userid: this.editId,
+            },
+            (result) => {
+              if (result.data.affectedRows === 1) {
+                this.$message({
+                  message: "Updated!",
+                  type: "success",
+                });
+                this.onCancel();
+              }
+            }
+          );
         }
-      );
+      });
     },
     onCancel() {
       this.isEdit = false;
@@ -258,6 +272,7 @@ export default {
         adminLevel: 0,
       };
       this.getUserlist();
+      this.$refs.form.resetFields();
     },
     onInactivate() {
       this.$confirm(

@@ -88,6 +88,7 @@
     <el-form
       :inline="false"
       :model="form"
+      ref="form"
       class="form"
       :label-width="isNarrow ? 'auto' : '110px'"
     >
@@ -371,20 +372,24 @@ export default {
       this.dialogFormVisible = true;
     },
     onSubmit() {
-      this.addMeasurement(
-        {
-          ...this.form,
-          customerid: this.form.customer,
-        },
-        (result) => {
-          if (result.data.data) {
-            this.$message({
-              message: "Record added!",
-              type: "success",
-            });
-          }
+      this.$refs.form.validate((flag) => {
+        if (flag) {
+          this.addMeasurement(
+            {
+              ...this.form,
+              customerid: this.form.customer,
+            },
+            (result) => {
+              if (result.data.data) {
+                this.$message({
+                  message: "Record added!",
+                  type: "success",
+                });
+              }
+            }
+          );
         }
-      );
+      });
     },
     handleCustomerSelect(id) {
       this.getMeasurementById(id);
@@ -406,22 +411,26 @@ export default {
       };
     },
     onConfirm() {
-      this.editMeasurement(
-        {
-          ...this.form,
-          customerid: this.form.customer,
-          measurementid: this.editId,
-        },
-        (result) => {
-          if (result.data.affectedRows === 1) {
-            this.$message({
-              message: "Updated!",
-              type: "success",
-            });
-            this.onCancel();
-          }
+      this.$refs.form.validate((flag) => {
+        if (flag) {
+          this.editMeasurement(
+            {
+              ...this.form,
+              customerid: this.form.customer,
+              measurementid: this.editId,
+            },
+            (result) => {
+              if (result.data.affectedRows === 1) {
+                this.$message({
+                  message: "Updated!",
+                  type: "success",
+                });
+                this.onCancel();
+              }
+            }
+          );
         }
-      );
+      });
     },
     onCancel() {
       const c = this.form.customer;
@@ -440,6 +449,7 @@ export default {
       this.getMeasurementById(c);
       this.isEdit = false;
       this.editId = 0;
+      this.$refs.form.resetFields();
     },
     handleDeleteClick(row) {
       this.$confirm(

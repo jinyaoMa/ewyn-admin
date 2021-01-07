@@ -88,6 +88,7 @@
     <el-form
       :inline="false"
       :model="form"
+      ref="form"
       class="form"
       :label-width="isNarrow ? 'auto' : '110px'"
     >
@@ -126,10 +127,10 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item required prop="cardio" label="Cardio">
+      <el-form-item prop="cardio" label="Cardio">
         <el-input v-model="form.cardio" placeholder="Cardio"></el-input>
       </el-form-item>
-      <el-form-item required prop="comment" label="Comments">
+      <el-form-item prop="comment" label="Comments">
         <el-input
           type="textarea"
           v-model="form.comment"
@@ -269,6 +270,9 @@ export default {
     };
   },
   mounted() {
+    this.getProgramlist();
+    this.getProductlist();
+    this.getCompliancylist();
     if (parseInt(this.$store.state.cid)) {
       this.getAttendanceById(this.$store.state.cid);
       this.getCustomerById(this.$store.state.cid, (result) => {
@@ -327,20 +331,24 @@ export default {
       this.dialogFormVisible = true;
     },
     onSubmit() {
-      this.addAttendance(
-        {
-          ...this.form,
-          customerid: this.form.customer,
-        },
-        (result) => {
-          if (result.data.data) {
-            this.$message({
-              message: "Checked in!",
-              type: "success",
-            });
-          }
+      this.$refs.form.validate((flag) => {
+        if (flag) {
+          this.addAttendance(
+            {
+              ...this.form,
+              customerid: this.form.customer,
+            },
+            (result) => {
+              if (result.data.data) {
+                this.$message({
+                  message: "Checked in!",
+                  type: "success",
+                });
+              }
+            }
+          );
         }
-      );
+      });
     },
     handleCustomerSelect(id) {
       this.getAttendanceById(id);
@@ -359,22 +367,26 @@ export default {
       };
     },
     onConfirm() {
-      this.editAttendance(
-        {
-          ...this.form,
-          customerid: this.form.customer,
-          attendanceid: this.editId,
-        },
-        (result) => {
-          if (result.data.affectedRows === 1) {
-            this.$message({
-              message: "Updated!",
-              type: "success",
-            });
-            this.onCancel();
-          }
+      this.$refs.form.validate((flag) => {
+        if (flag) {
+          this.editAttendance(
+            {
+              ...this.form,
+              customerid: this.form.customer,
+              attendanceid: this.editId,
+            },
+            (result) => {
+              if (result.data.affectedRows === 1) {
+                this.$message({
+                  message: "Updated!",
+                  type: "success",
+                });
+                this.onCancel();
+              }
+            }
+          );
         }
-      );
+      });
     },
     onCancel() {
       const c = this.form.customer;
@@ -390,6 +402,7 @@ export default {
       this.getAttendanceById(c);
       this.isEdit = false;
       this.editId = 0;
+      this.$refs.form.resetFields();
     },
     handleDeleteClick(row) {
       this.$confirm(

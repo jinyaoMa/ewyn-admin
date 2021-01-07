@@ -133,6 +133,9 @@ export default {
     };
   },
   mounted() {
+    this.getProgramlist();
+    this.getProductlist();
+    this.getCompliancylist();
     this.getAttendancelist();
     this.getAttendanceDateCount();
   },

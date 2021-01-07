@@ -130,31 +130,36 @@ export default {
   },
   mounted() {
     // console.log(this);
-    this.getProgramlist();
-    this.getProductlist();
-    this.getCompliancylist();
     if (!this.$isServer) {
       window.addEventListener("resize", this.onResize);
       this.onResize();
     }
   },
   updated() {
-    if (
-      typeof window !== "undefined" &&
-      !this.$route.path.startsWith("/login")
-    ) {
-      if (
-        window.localStorage.getItem(btoa("userid")) === null ||
-        window.localStorage.getItem(btoa("userid")) === "0"
-      ) {
-        this.$router.replace("/login");
-      }
+    if (this.isLogin) {
+      this.$router.replace("/login");
     }
   },
   destroyed() {
     if (!this.$isServer) {
       window.removeEventListener("resize", this.onResize);
     }
+  },
+  computed: {
+    isLogin() {
+      if (
+        typeof window !== "undefined" &&
+        !this.$route.path.startsWith("/login")
+      ) {
+        if (
+          window.localStorage.getItem(btoa("userid")) === null ||
+          window.localStorage.getItem(btoa("userid")) === "0"
+        ) {
+          return true;
+        }
+      }
+      return false;
+    },
   },
   methods: {
     onLogoutClick() {
