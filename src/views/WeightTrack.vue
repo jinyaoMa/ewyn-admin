@@ -119,7 +119,7 @@
     <el-divider></el-divider>
     <v-chart :options="polar" autoresize></v-chart>
     <el-divider></el-divider>
-    <el-table :data="attendanceList" border style="width: 100%">
+    <el-table :data="measurementList" border style="width: 100%">
       <el-table-column
         show-overflow-tooltip
         sortable
