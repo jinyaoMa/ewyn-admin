@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     ...Vuex.mapGetters({
-      isNarrow: 'isNarrow',
+      isNarrow: "isNarrow"
     }),
     moment(str) {
       return function(params) {
@@ -232,6 +232,14 @@ export default {
         .get(this.constants.string.server_base + `measurement/customer/${id}`)
         .then((result) => {
           this.measurementList = result.data.data;
+        });
+    },
+    getMeasurementByDateRange(data, callback) {
+      this.$http
+        .post(this.constants.string.server_base + "measurement/dateRange", data)
+        .then((result) => {
+          this.measurementList = result.data.data;
+          typeof callback === "function" && callback(result);
         });
     },
     addUser(data, callback) {

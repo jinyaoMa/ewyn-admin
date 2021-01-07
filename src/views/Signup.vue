@@ -85,7 +85,12 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-form :inline="false" :model="form" class="form" :label-width="isNarrow ? '' : '150px'">
+    <el-form
+      :inline="false"
+      :model="form"
+      class="form"
+      :label-width="isNarrow ? '' : '160px'"
+    >
       <el-form-item>
         <el-switch
           v-model="form.action"
@@ -95,30 +100,30 @@
         >
         </el-switch>
       </el-form-item>
-      <el-form-item label="First Name">
+      <el-form-item required prop="firstname" label="First Name">
         <el-input v-model="form.firstname" placeholder="First Name"></el-input>
       </el-form-item>
-      <el-form-item label="Last Name">
+      <el-form-item required prop="lastname" label="Last Name">
         <el-input v-model="form.lastname" placeholder="Last Name"></el-input>
       </el-form-item>
-      <el-form-item label="Telephone">
+      <el-form-item required prop="telephone" label="Telephone">
         <el-input v-model="form.telephone" placeholder="Telephone"></el-input>
       </el-form-item>
-      <el-form-item label="Goal Date">
+      <el-form-item required prop="goalDate" label="Goal Date">
         <el-date-picker
           v-model="form.goalDate"
           type="date"
           placeholder="Pick a date"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="Email">
+      <el-form-item required prop="email" label="Email">
         <el-input
           v-model="form.email"
           placeholder="Email"
           type="email"
         ></el-input>
       </el-form-item>
-      <el-form-item label="Program Type">
+      <el-form-item required prop="program" label="Program Type">
         <el-select v-model="form.program" placeholder="Program Type">
           <el-option
             v-for="program in $store.state.programlist"
@@ -128,7 +133,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="Reason for Joining">
+      <el-form-item required prop="reason" label="Reason for Joining">
         <el-input
           type="textarea"
           v-model="form.reason"
@@ -138,7 +143,7 @@
           :rows="3"
         ></el-input>
       </el-form-item>
-      <el-form-item label="Product Use">
+      <el-form-item required prop="product" label="Product Use">
         <el-select v-model="form.product" placeholder="Product Use">
           <el-option
             v-for="product in $store.state.productlist"
@@ -148,7 +153,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="Recommended">
+      <el-form-item required prop="recommend" label="Recommended">
         <el-select v-model="form.recommend" placeholder="Recommended">
           <el-option
             v-for="product in $store.state.productlist"
@@ -158,14 +163,14 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="Start Date">
+      <el-form-item required prop="startDate" label="Start Date">
         <el-date-picker
           v-model="form.startDate"
           type="date"
           placeholder="Pick a date"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="Start Weight (lb)">
+      <el-form-item required prop="startWeight" label="Start Weight (lb)">
         <el-input-number
           v-model="form.startWeight"
           :precision="2"
@@ -174,7 +179,7 @@
           controls-position="right"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="Goal Weight (lb)">
+      <el-form-item required prop="goalWeight" label="Goal Weight (lb)">
         <el-input-number
           v-model="form.goalWeight"
           :precision="2"
@@ -385,13 +390,13 @@ export default {
             firstname: c.first_name,
             lastname: c.last_name,
             telephone: c.telephone,
-            goalDate: moment(c.goal_date).add(1, 'd').format("YYYY-MM-DD"),
+            goalDate: moment(c.goal_date).add(1, "d").format("YYYY-MM-DD"),
             email: c.email,
             program: c.programid,
             reason: c.reason,
             product: c.productid,
             recommend: c.recommend,
-            startDate: moment(c.start_date).add(1, 'd').format("YYYY-MM-DD"),
+            startDate: moment(c.start_date).add(1, "d").format("YYYY-MM-DD"),
             startWeight: c.start_weight,
             goalWeight: c.goal_weight,
           };
@@ -463,7 +468,7 @@ export default {
       this.editCustomer(
         {
           ...this.form,
-          customerid: this.editId,
+          customerid: this.customerId,
         },
         (result) => {
           if (result.data.affectedRows === 1) {

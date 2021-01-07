@@ -85,7 +85,12 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-form :inline="false" :model="form" class="form" :label-width="isNarrow ? '' : '100px'">
+    <el-form
+      :inline="false"
+      :model="form"
+      class="form"
+      :label-width="isNarrow ? '' : '100px'"
+    >
       <el-form-item label="Customer">
         <el-button type="default" @click="onSelectCustomerClick">
           {{ customerString }}
@@ -116,11 +121,7 @@
     <el-divider></el-divider>
     <v-chart :options="polar" autoresize></v-chart>
     <el-divider></el-divider>
-    <el-table
-      :data="attendanceList"
-      border
-      style="width: 100%"
-    >
+    <el-table :data="attendanceList" border style="width: 100%">
       <el-table-column
         show-overflow-tooltip
         sortable
@@ -297,7 +298,7 @@ export default {
       this.dialogFormVisible = true;
     },
     onSubmit() {
-      this.getAttendanceByDateRange(
+      this.getMeasurementByDateRange(
         {
           startDate: this.form.startDate,
           endDate: this.form.endDate,

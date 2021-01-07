@@ -85,26 +85,31 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-form :inline="false" :model="form" class="form" :label-width="isNarrow ? 'auto' : '100px'">
+    <el-form
+      :inline="false"
+      :model="form"
+      class="form"
+      :label-width="isNarrow ? 'auto' : '110px'"
+    >
       <el-form-item label="Customer">
         <el-button type="default" @click="onSelectCustomerClick">
           {{ customerString }}
         </el-button>
       </el-form-item>
-      <el-form-item label="Date">
+      <el-form-item required prop="date" label="Date">
         <el-date-picker
           v-model="form.date"
           type="date"
           placeholder="Pick a date"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="PHC Initial">
+      <el-form-item required prop="phcInitial" label="PHC Initial">
         <el-input
           v-model="form.phcInitial"
           placeholder="PHC Initial"
         ></el-input>
       </el-form-item>
-      <el-form-item label="Weight (lb)">
+      <el-form-item required prop="weight" label="Weight (lb)">
         <el-input-number
           v-model="form.weight"
           :precision="2"
@@ -113,7 +118,7 @@
           controls-position="right"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="Bust/Chest">
+      <el-form-item required prop="bustChest" label="Bust/Chest">
         <el-input-number
           v-model="form.bustChest"
           :precision="2"
@@ -122,7 +127,7 @@
           controls-position="right"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="Waist">
+      <el-form-item required prop="waist" label="Waist">
         <el-input-number
           v-model="form.waist"
           :precision="2"
@@ -131,7 +136,7 @@
           controls-position="right"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="Mid Section">
+      <el-form-item required prop="midSection" label="Mid Section">
         <el-input-number
           v-model="form.midSection"
           :precision="2"
@@ -140,7 +145,7 @@
           controls-position="right"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="Hips">
+      <el-form-item required prop="hips" label="Hips">
         <el-input-number
           v-model="form.hips"
           :precision="2"
@@ -149,7 +154,7 @@
           controls-position="right"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="Right Arm">
+      <el-form-item required prop="rightArm" label="Right Arm">
         <el-input-number
           v-model="form.rightArm"
           :precision="2"
@@ -158,7 +163,7 @@
           controls-position="right"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="Right Thigh">
+      <el-form-item required prop="rightThigh" label="Right Thigh">
         <el-input-number
           v-model="form.rightThigh"
           :precision="2"
@@ -183,12 +188,7 @@
       </el-form-item>
     </el-form>
     <el-divider v-if="!isEdit"></el-divider>
-    <el-table
-      v-if="!isEdit"
-      :data="measurementList"
-      border
-      style="width: 100%"
-    >
+    <el-table v-if="!isEdit" :data="measurementList" border style="width: 100%">
       <el-table-column
         show-overflow-tooltip
         sortable
@@ -394,7 +394,7 @@ export default {
       this.editId = row.measurementid;
       this.form = {
         customer: row.customerid,
-        date: moment(row.date).add(1, 'd').format("YYYY-MM-DD"),
+        date: moment(row.date).add(1, "d").format("YYYY-MM-DD"),
         phcInitial: row.phc_initial,
         weight: row.weight,
         bustChest: row.bust_chest,
@@ -443,7 +443,7 @@ export default {
     },
     handleDeleteClick(row) {
       this.$confirm(
-        `Record ${moment(row.date).add(1, 'd').format("YYYY-MM-DD")} (Weight: ${
+        `Record ${moment(row.date).add(1, "d").format("YYYY-MM-DD")} (Weight: ${
           row.weight
         }) will be deleted`,
         "Delete",

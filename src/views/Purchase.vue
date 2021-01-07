@@ -85,13 +85,18 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-form :inline="false" :model="form" class="form" :label-width="isNarrow ? '' : '90px'">
+    <el-form
+      :inline="false"
+      :model="form"
+      class="form"
+      :label-width="isNarrow ? '' : '90px'"
+    >
       <el-form-item label="Customer">
         <el-button type="default" @click="onSelectCustomerClick">
           {{ customerString }}
         </el-button>
       </el-form-item>
-      <el-form-item label="Week">
+      <el-form-item required prop="week" label="Week">
         <el-input-number
           v-model="form.week"
           :precision="0"
@@ -99,7 +104,7 @@
           :min="1"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="Products">
+      <el-form-item required prop="product" label="Products">
         <el-select
           v-model="form.product"
           placeholder="Product to purchase"

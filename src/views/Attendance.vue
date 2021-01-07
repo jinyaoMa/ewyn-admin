@@ -85,20 +85,25 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-form :inline="false" :model="form" class="form" :label-width="isNarrow ? 'auto' : '100px'">
+    <el-form
+      :inline="false"
+      :model="form"
+      class="form"
+      :label-width="isNarrow ? 'auto' : '110px'"
+    >
       <el-form-item label="Customer">
         <el-button type="default" @click="onSelectCustomerClick">
           {{ customerString }}
         </el-button>
       </el-form-item>
-      <el-form-item label="Date">
+      <el-form-item required prop="date" label="Date">
         <el-date-picker
           v-model="form.date"
           type="date"
           placeholder="Pick a date"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="Weight (lb)">
+      <el-form-item required prop="weight" label="Weight (lb)">
         <el-input-number
           v-model="form.weight"
           :precision="2"
@@ -107,7 +112,7 @@
           controls-position="right"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="Product">
+      <el-form-item required prop="product" label="Product">
         <el-select
           v-model="form.product"
           filterable
@@ -121,10 +126,10 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="Cardio">
+      <el-form-item required prop="cardio" label="Cardio">
         <el-input v-model="form.cardio" placeholder="Cardio"></el-input>
       </el-form-item>
-      <el-form-item label="Comments">
+      <el-form-item required prop="comment" label="Comments">
         <el-input
           type="textarea"
           v-model="form.comment"
@@ -134,7 +139,7 @@
           :rows="3"
         ></el-input>
       </el-form-item>
-      <el-form-item label="DTR">
+      <el-form-item required prop="dtr" label="DTR">
         <el-date-picker
           v-model="form.dtr"
           type="date"
@@ -157,12 +162,7 @@
       </el-form-item>
     </el-form>
     <el-divider v-if="!isEdit"></el-divider>
-    <el-table
-      v-if="!isEdit"
-      :data="attendanceList"
-      border
-      style="width: 100%"
-    >
+    <el-table v-if="!isEdit" :data="attendanceList" border style="width: 100%">
       <el-table-column
         show-overflow-tooltip
         sortable
@@ -350,12 +350,12 @@ export default {
       this.editId = row.attendanceid;
       this.form = {
         customer: row.customerid,
-        date: moment(row.date).add(1, 'd').format("YYYY-MM-DD"),
+        date: moment(row.date).add(1, "d").format("YYYY-MM-DD"),
         weight: row.weight,
         product: row.compliancyid,
         cardio: row.cardio,
         comment: row.comment,
-        dtr: moment(row.dtr).add(1, 'd').format("YYYY-MM-DD"),
+        dtr: moment(row.dtr).add(1, "d").format("YYYY-MM-DD"),
       };
     },
     onConfirm() {
@@ -393,7 +393,7 @@ export default {
     },
     handleDeleteClick(row) {
       this.$confirm(
-        `Record ${moment(row.date).add(1, 'd').format("YYYY-MM-DD")} (Weight: ${
+        `Record ${moment(row.date).add(1, "d").format("YYYY-MM-DD")} (Weight: ${
           row.weight
         }) will be deleted`,
         "Delete",
