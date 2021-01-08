@@ -145,24 +145,26 @@
         ></el-input>
       </el-form-item>
       <el-form-item required prop="product" label="Product Use">
-        <el-select v-model="form.product" placeholder="Product Use">
-          <el-option
-            v-for="product in $store.state.productlist"
-            :label="product.product_name"
-            :value="product.productid"
-            :key="product.productid"
-          ></el-option>
-        </el-select>
+        <el-transfer
+          filterable
+          filter-placeholder="Search by keywords"
+          v-model="form.product"
+          :data="customProductlist"
+          :titles="['Source', 'Target']"
+          :button-texts="['To Source', 'To Target']"
+          :render-content="renderFunc"
+        ></el-transfer>
       </el-form-item>
-      <el-form-item required prop="recommend" label="Recommended">
-        <el-select v-model="form.recommend" placeholder="Recommended">
-          <el-option
-            v-for="product in $store.state.productlist"
-            :label="product.product_name"
-            :value="product.productid"
-            :key="product.productid"
-          ></el-option>
-        </el-select>
+      <el-form-item prop="recommend" label="Recommended">
+        <el-transfer
+          filterable
+          filter-placeholder="Search by keywords"
+          v-model="form.recommend"
+          :data="customProductlist"
+          :titles="['Source', 'Target']"
+          :button-texts="['To Source', 'To Target']"
+          :render-content="renderFunc"
+        ></el-transfer>
       </el-form-item>
       <el-form-item required prop="startDate" label="Start Date">
         <el-date-picker
@@ -361,20 +363,45 @@ export default {
         email: "",
         program: "",
         reason: "",
-        product: "",
-        recommend: "",
+        product: [],
+        recommend: [],
         startDate: "",
         startWeight: 0.0,
         goalWeight: 0.0,
       },
       isEdit: false,
       editId: 0,
+      renderFunc(h, option) {
+        return (
+          <span>
+            {option.label}
+            <el-tag
+              size="mini"
+              effect="plain"
+              type={option.optional ? "default" : "success"}
+            >
+              {option.optional ? "Optional" : "Mandatory"}
+            </el-tag>
+          </span>
+        );
+      },
     };
   },
   mounted() {
     this.getProgramlist();
     this.getProductlist();
     this.getCompliancylist();
+  },
+  computed: {
+    customProductlist() {
+      return this.$store.state.productlist.map((item) => {
+        return {
+          key: `${item.productid}`,
+          label: item.product_name,
+          optional: item.optional,
+        };
+      });
+    },
   },
   methods: {
     handleDialogInnerSelect() {
@@ -400,12 +427,13 @@ export default {
             email: c.email,
             program: c.programid,
             reason: c.reason,
-            product: c.productid,
-            recommend: c.recommend,
+            product: c.productid ? `${c.productid}`.split(",") : [],
+            recommend: c.recommend ? `${c.recommend}`.split(",") : [],
             startDate: moment(c.start_date).add(1, "d").format("YYYY-MM-DD"),
             startWeight: c.start_weight,
             goalWeight: c.goal_weight,
           };
+          console.log(this.form);
           this.dialogFormVisible = false;
           this.dialogFormInnerVisible = false;
           this.dialogFormInnerSelect = null;
@@ -444,14 +472,21 @@ export default {
     onSubmit() {
       this.$refs.form.validate((flag) => {
         if (flag) {
-          this.addCustomer(this.form, (result) => {
-            if (result.data.data) {
-              this.$message({
-                message: "Create successfully!",
-                type: "success",
-              });
+          this.addCustomer(
+            {
+              ...this.form,
+              product: this.form.product.join(","),
+              recommend: this.form.recommend.join(","),
+            },
+            (result) => {
+              if (result.data.data) {
+                this.$message({
+                  message: "Create successfully!",
+                  type: "success",
+                });
+              }
             }
-          });
+          );
         }
       });
     },
@@ -481,6 +516,8 @@ export default {
             {
               ...this.form,
               customerid: this.customerId,
+              product: this.form.product.join(","),
+              recommend: this.form.recommend.join(","),
             },
             (result) => {
               if (result.data.affectedRows === 1) {
@@ -488,7 +525,6 @@ export default {
                   message: "Updated!",
                   type: "success",
                 });
-                this.onCancel();
               }
             }
           );
@@ -509,8 +545,8 @@ export default {
         email: "",
         program: "",
         reason: "",
-        product: "",
-        recommend: "",
+        product: [],
+        recommend: [],
         startDate: "",
         startWeight: 0.0,
         goalWeight: 0.0,

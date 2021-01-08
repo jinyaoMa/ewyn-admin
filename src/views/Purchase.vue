@@ -105,7 +105,7 @@
           :min="1"
         ></el-input-number>
       </el-form-item>
-      <el-form-item required prop="product" label="Products">
+      <el-form-item required prop="product" label="Product">
         <el-select
           v-model="form.product"
           placeholder="Product to purchase"
@@ -121,7 +121,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="Due Date">
+      <el-form-item required prop="dueDate" label="Due Date">
         <el-date-picker
           v-model="form.dueDate"
           type="date"

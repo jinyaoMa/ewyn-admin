@@ -121,7 +121,10 @@ export default {
         this.$router.replace("/login");
       } else {
         this.auth(window.localStorage.getItem(btoa("userid")), (result) => {
-          if (result.data.status === "logout") {
+          if (
+            result.data.status === "logout" ||
+            result.data.status === "auth"
+          ) {
             this.$router.replace("/login");
           }
         });
@@ -198,6 +201,26 @@ export default {
 
 >>> .el-input
   width 100% !important
+
+>>> .el-select
+  width 100%
+
+>>> .el-transfer
+  display flex
+  flex-direction column
+  width 100%
+  > div
+    width 100%
+  .el-transfer-panel__filter
+    width calc(100% - 30px) !important
+  .el-transfer__buttons
+    padding 10px 0 0
+    text-align center
+  span+[class*=el-icon-]
+    margin-left 5px
+  .el-checkbox__label .el-tag
+    margin-left 0.6em
+    transform translateY(-1px)
 </style>
 
 <style lang="stylus">

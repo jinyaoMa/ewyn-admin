@@ -113,7 +113,7 @@
           controls-position="right"
         ></el-input-number>
       </el-form-item>
-      <el-form-item required prop="product" label="Product">
+      <el-form-item required prop="product" label="Compliance">
         <el-select
           v-model="form.product"
           filterable

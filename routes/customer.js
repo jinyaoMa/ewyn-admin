@@ -111,7 +111,13 @@ module.exports = (express, db) => {
       const goalWeight = req.body.goalWeight;
       const program = req.body.program;
       const product = req.body.product;
+      if (!/^[0-9,]*$/.test(product)) {
+        throw new Error("product format error");
+      }
       const recommend = req.body.recommend;
+      if (!/^[0-9,]*$/.test(recommend)) {
+        throw new Error("recommend format error");
+      }
       const sql = `INSERT INTO customer
       (first_name, last_name, telephone, goal_date, email, reason, start_date, start_weight, goal_weight, programid, productid, recommend)
       VALUES ?`;
@@ -127,8 +133,8 @@ module.exports = (express, db) => {
           parseFloat(startWeight),
           parseFloat(goalWeight),
           parseInt(program),
-          parseInt(product),
-          parseInt(recommend)
+          product,
+          recommend
         ]
       ];
       db(sql, [values], (err, result) => {
@@ -176,7 +182,13 @@ module.exports = (express, db) => {
       const goalWeight = req.body.goalWeight;
       const program = req.body.program;
       const product = req.body.product;
+      if (!/^[0-9,]*$/.test(product)) {
+        throw new Error("product format error");
+      }
       const recommend = req.body.recommend;
+      if (!/^[0-9,]*$/.test(recommend)) {
+        throw new Error("recommend format error");
+      }
       const customerid = req.body.customerid;
       const sql = `UPDATE customer SET first_name = ?,
       last_name = ?,
@@ -202,12 +214,11 @@ module.exports = (express, db) => {
         parseFloat(startWeight),
         parseFloat(goalWeight),
         parseInt(program),
-        parseInt(product),
-        parseInt(recommend),
+        product,
+        recommend,
         parseInt(customerid)
       ];
-      db(sql, values, (err, result, f) => {
-        console.log(f);
+      db(sql, values, (err, result) => {
         if (err) {
           res.json({
             code: 204,
